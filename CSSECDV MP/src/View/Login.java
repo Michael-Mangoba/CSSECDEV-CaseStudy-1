@@ -1,5 +1,8 @@
 
 package View;
+import Controller.SQLite;
+import Model.User;
+import java.util.ArrayList;
 
 public class Login extends javax.swing.JPanel {
 
@@ -83,7 +86,28 @@ public class Login extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
-        frame.mainNav();
+        SQLite sqlite = new SQLite();
+        ArrayList<User> users = new ArrayList<>();
+        users = sqlite.getUsers();
+        String inputUsername = usernameFld.getText();
+        String inputPassword = passwordFld.getText();
+        
+        int userID = -1;
+        
+        for (User user : users) {
+            if (user.getUsername().equals(inputUsername) && user.getPassword().equals(inputPassword)) {
+                userID = user.getId();
+                break;
+            }
+        }
+            
+        if(userID != -1){
+            frame.mainNav();
+        }
+        usernameFld.setText("");
+        passwordFld.setText("");
+        
+        //Warning Message for Invalid
     }//GEN-LAST:event_loginBtnActionPerformed
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
