@@ -97,8 +97,15 @@ public class Register extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
-        frame.registerAction(usernameFld.getText(), passwordFld.getText(), confpassFld.getText());
-        frame.loginNav();
+        String password = passwordFld.getText();
+        String confpassword = passwordFld.getText();
+        String username = usernameFld.getText();
+        
+        //Check if password and confpassword is the same
+        if(password.equals(confpassword) && password.length() >= 8){
+            frame.registerAction(usernameFld.getText(), passwordFld.getText(), confpassFld.getText());
+            frame.loginNav();
+        }
     }//GEN-LAST:event_registerBtnActionPerformed
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
