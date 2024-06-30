@@ -98,7 +98,7 @@ public class Register extends javax.swing.JPanel {
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
         String password = passwordFld.getText();
-        String confpassword = passwordFld.getText();
+        String confpassword = confpassFld.getText();
         String username = usernameFld.getText();
         
         //Check if password and confpassword is the same
