@@ -113,7 +113,7 @@ public class Register extends javax.swing.JPanel {
         if(!password.equals(confpassword))
             valid = false;
         //Checks if the length of the registered password is valid
-        if(password.length() < 8)
+        if(password.length() < 8 || password.length() > 64)
             valid = false;
         
         if(valid){
