@@ -1,6 +1,8 @@
 
 package View;
-
+import Controller.SQLite;
+import Model.User;
+import java.util.ArrayList;
 
 public class Register extends javax.swing.JPanel {
 
@@ -98,7 +100,8 @@ public class Register extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
-        
+        SQLite sqlite = new SQLite();
+        ArrayList<User> users = new ArrayList<>();
         
         
         String password = passwordFld.getText();
@@ -107,7 +110,13 @@ public class Register extends javax.swing.JPanel {
         
         boolean valid = true;
         
-        
+        //Checks if Username already exists within the database
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                valid = false;
+                break;
+            }
+        }
         
         //Checks if password and confpassword is the same
         if(!password.equals(confpassword))
