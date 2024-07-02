@@ -92,7 +92,11 @@ public class Login extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
+        
+        
+        
         long currentTime = System.currentTimeMillis();
+        //Checks how many seconds left until allowed to attempt login
         if (loginAttempts >= MAX_ATTEMPTS && currentTime - lastAttemptTime < COOLDOWN_PERIOD) {
             long waitTime = (COOLDOWN_PERIOD - (currentTime - lastAttemptTime)) / 1000;
             JOptionPane.showMessageDialog(this, "Too many failed attempts. Please wait " + waitTime + " seconds before trying again.");
@@ -107,13 +111,14 @@ public class Login extends javax.swing.JPanel {
         
         int userID = -1;
         
+        //Checks if Username and Password are valid
         for (User user : users) {
             if (user.getUsername().equals(inputUsername) && user.getPassword().equals(inputPassword)) {
                 userID = user.getId();
                 break;
             }
         }
-            
+        
         if(userID != -1){
             frame.mainNav();
         }else {
