@@ -3,10 +3,16 @@ package View;
 import Controller.SQLite;
 import Model.User;
 import java.util.ArrayList;
-
+import javax.swing.JOptionPane;
+        
 public class Login extends javax.swing.JPanel {
 
     public Frame frame;
+    //Variable declaration
+    private int loginAttempts = 0;
+    private long lastAttemptTime = 0;
+    private static final int MAX_ATTEMPTS = 5;
+    private static final long COOLDOWN_PERIOD = 5 * 60 * 1000;
     
     public Login() {
         initComponents();
@@ -86,6 +92,13 @@ public class Login extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
+        long currentTime = System.currentTimeMillis();
+        if (loginAttempts >= MAX_ATTEMPTS && currentTime - lastAttemptTime < COOLDOWN_PERIOD) {
+            long waitTime = (COOLDOWN_PERIOD - (currentTime - lastAttemptTime)) / 1000;
+            JOptionPane.showMessageDialog(this, "Too many failed attempts. Please wait " + waitTime + " seconds before trying again.");
+            return;
+        }
+        
         SQLite sqlite = new SQLite();
         ArrayList<User> users = new ArrayList<>();
         users = sqlite.getUsers();
@@ -103,7 +116,13 @@ public class Login extends javax.swing.JPanel {
             
         if(userID != -1){
             frame.mainNav();
+        }else {
+            loginAttempts++;
+            lastAttemptTime = currentTime;
+            JOptionPane.showMessageDialog(this, "Invalid username or password. Attempts remaining: " + (MAX_ATTEMPTS - loginAttempts));
         }
+        
+        
         usernameFld.setText("");
         passwordFld.setText("");
         
