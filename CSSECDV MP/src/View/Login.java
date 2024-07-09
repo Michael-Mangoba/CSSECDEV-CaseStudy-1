@@ -124,7 +124,7 @@ public class Login extends javax.swing.JPanel {
         }else {
             loginAttempts++;
             lastAttemptTime = currentTime;
-            JOptionPane.showMessageDialog(this, "Invalid username or password. Attempts remaining: " + (MAX_ATTEMPTS - loginAttempts));
+            JOptionPane.showMessageDialog(this, "Login failed; Invalid user ID or password. Attempts remaining: " + (MAX_ATTEMPTS - loginAttempts));
         }
         
         
