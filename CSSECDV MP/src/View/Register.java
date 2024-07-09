@@ -1,13 +1,14 @@
-
 package View;
+
 import Controller.SQLite;
 import Model.User;
 import java.util.ArrayList;
 
+
 public class Register extends javax.swing.JPanel {
 
     public Frame frame;
-    
+
     public Register() {
         initComponents();
     }
@@ -102,34 +103,36 @@ public class Register extends javax.swing.JPanel {
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
         SQLite sqlite = new SQLite();
         ArrayList<User> users = new ArrayList<>();
-        
-        
+
         String password = passwordFld.getText();
         String confpassword = confpassFld.getText();
         String username = usernameFld.getText();
-        
+
         boolean valid = true;
-        
+
         //Checks if Username already exists within the database
         for (User user : users) {
-            if (user.getUsername().equals(username)) {
+            if (user.getUsername().toLowerCase().equals(username.toLowerCase())) {
                 valid = false;
                 break;
             }
         }
-        
+
         //Checks if password and confpassword is the same
-        if(!password.equals(confpassword))
+        if (!password.equals(confpassword)) {
             valid = false;
+        }
         //Checks if the length of the registered password is valid
-        if(password.length() < 8 || password.length() > 64)
+        if (password.length() < 8 || password.length() > 64) {
             valid = false;
-        
-        if(valid){
+            
+        }
+
+        if (valid) {
             frame.registerAction(usernameFld.getText(), passwordFld.getText(), confpassFld.getText());
             frame.loginNav();
         }
-        
+
     }//GEN-LAST:event_registerBtnActionPerformed
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
