@@ -3,7 +3,7 @@ package View;
 import Controller.SQLite;
 import Model.User;
 import java.util.ArrayList;
-
+import javax.swing.JOptionPane;
 
 public class Register extends javax.swing.JPanel {
 
@@ -125,7 +125,7 @@ public class Register extends javax.swing.JPanel {
         //Checks if the length of the registered password is valid
         if (password.length() < 8 || password.length() > 64) {
             valid = false;
-            
+            JOptionPane.showMessageDialog(this, "Invalid password length. Minimum Lenght: 8, Maximum Length: 64");
         }
 
         if (valid) {
