@@ -131,6 +131,9 @@ public class Register extends javax.swing.JPanel {
         if (valid) {
             frame.registerAction(usernameFld.getText(), passwordFld.getText(), confpassFld.getText());
             frame.loginNav();
+            usernameFld.setText("");
+            passwordFld.setText("");
+            confpassFld.setText("");
         }
 
     }//GEN-LAST:event_registerBtnActionPerformed
