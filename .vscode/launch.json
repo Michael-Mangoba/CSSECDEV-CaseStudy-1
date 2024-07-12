@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch Main",
+            "request": "launch",
+            "mainClass": "Controller.Main",
+            "projectName": "CSSECDEV-CaseStudy-1_b7bc01d5",
+            "env": {
+                "EXAMPLE_ENV_VAR": "your_value"
+            },
+            //"preLaunchTask": "your-build-task-name", // Specify the name of your build task if needed
+            "classpath": [
+                "${workspaceFolder}/path/to/external/libs/sqlite-jdbc-3.23.1.jar", // Optional: Specify if manual classpath is necessary
+                "${workspaceFolder}/bin" // Adjust according to your project structure
+            ],
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

@@ -1,19 +1,23 @@
-
 package View;
 import Controller.SQLite;
 import Model.User;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-        
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Login extends javax.swing.JPanel {
 
     public Frame frame;
-    //Variable declaration
+    // Variable declaration
     private int loginAttempts = 0;
     private long lastAttemptTime = 0;
     private static final int MAX_ATTEMPTS = 5;
     private static final long COOLDOWN_PERIOD = 5 * 60 * 1000;
-    
+
     public Login() {
         initComponents();
     }
@@ -91,48 +95,57 @@ public class Login extends javax.swing.JPanel {
                 .addContainerGap(126, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
-        
-        
-        
+    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {                                         
         long currentTime = System.currentTimeMillis();
-        //Checks how many seconds left until allowed to attempt login
         if (loginAttempts >= MAX_ATTEMPTS && currentTime - lastAttemptTime < COOLDOWN_PERIOD) {
             long waitTime = (COOLDOWN_PERIOD - (currentTime - lastAttemptTime)) / 1000;
             JOptionPane.showMessageDialog(this, "Too many failed attempts. Please wait " + waitTime + " seconds before trying again.");
+            logAttempt(usernameFld.getText(), false);
             return;
         }
-        
+    
         SQLite sqlite = new SQLite();
-        ArrayList<User> users = new ArrayList<>();
-        users = sqlite.getUsers();
+        ArrayList<User> users = sqlite.getUsers();
         String inputUsername = usernameFld.getText();
         String inputPassword = passwordFld.getText();
-        
+    
         int userID = -1;
-        
-        //Checks if Username and Password are valid
+        boolean loginSuccess = false;
+        boolean needsPasswordUpdate = false; // Flag to check if password needs to be updated to hashed version
+    
         for (User user : users) {
-            if (user.getUsername().equals(inputUsername) && user.getPassword().equals(inputPassword)) {
-                userID = user.getId();
-                break;
+            // Check if the stored password is already hashed
+            if (user.getUsername().equals(inputUsername)) {
+                if (user.getPassword().equals(SecurityUtils.hashPassword(inputPassword)) || user.getPassword().equals(inputPassword)) {
+                    userID = user.getId();
+                    loginSuccess = true;
+                    // If password matches and is plain text, set flag to update it to hashed
+                    needsPasswordUpdate = !user.getPassword().equals(SecurityUtils.hashPassword(inputPassword));
+                    break;
+                }
             }
         }
-        
-        if(userID != -1){
-            frame.mainNav();
-        }else {
+    
+        logAttempt(inputUsername, loginSuccess);
+    
+        if (loginSuccess) {
+            frame.mainNav(); // Navigate to the main frame on successful login
+            if (needsPasswordUpdate) {
+                // Update the password in the database to a hashed version
+                String newHashedPassword = SecurityUtils.hashPassword(inputPassword);
+                sqlite.updateUserPassword(userID, newHashedPassword);
+                JOptionPane.showMessageDialog(this, "Password has been updated for enhanced security.");
+            }
+        } else {
             loginAttempts++;
             lastAttemptTime = currentTime;
             JOptionPane.showMessageDialog(this, "Login failed; Invalid user ID or password. Attempts remaining: " + (MAX_ATTEMPTS - loginAttempts));
         }
-        
-        
+    
         usernameFld.setText("");
         passwordFld.setText("");
-        
-        //Warning Message for Invalid
-    }//GEN-LAST:event_loginBtnActionPerformed
+    }
+    //GEN-LAST:event_loginBtnActionPerformed
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
         frame.registerNav();
@@ -140,6 +153,16 @@ public class Login extends javax.swing.JPanel {
         passwordFld.setText("");
     }//GEN-LAST:event_registerBtnActionPerformed
 
+    private void logAttempt(String username, boolean success) {
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        String logMessage = String.format("%s: Login attempt for %s was %s\n", timestamp, username, success ? "successful" : "failed");
+
+        try (FileWriter fw = new FileWriter("login_audit.log", true)) {
+            fw.write(logMessage);
+        } catch (IOException e) {
+            System.err.println("Error writing to log file: " + e.getMessage());
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -149,3 +172,4 @@ public class Login extends javax.swing.JPanel {
     private javax.swing.JTextField usernameFld;
     // End of variables declaration//GEN-END:variables
 }
+
