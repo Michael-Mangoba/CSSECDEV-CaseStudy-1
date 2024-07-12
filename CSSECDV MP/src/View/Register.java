@@ -4,10 +4,13 @@ import Controller.SQLite;
 import Model.User;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;  // Import JPasswordField;
 
 public class Register extends javax.swing.JPanel {
 
     public Frame frame;
+    
+    
 
     public Register() {
         initComponents();
@@ -100,43 +103,51 @@ public class Register extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
+    private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {                                            
         SQLite sqlite = new SQLite();
-        ArrayList<User> users = new ArrayList<>();
-
+        ArrayList<User> users = sqlite.getUsers();
+    
         String password = passwordFld.getText();
         String confpassword = confpassFld.getText();
         String username = usernameFld.getText();
-
+    
         boolean valid = true;
-
-        //Checks if Username already exists within the database
+    
+        // Check if Username already exists within the database
         for (User user : users) {
-            if (user.getUsername().toLowerCase().equals(username.toLowerCase())) {
+            if (user.getUsername().equalsIgnoreCase(username)) {
                 valid = false;
+                JOptionPane.showMessageDialog(this, "Username already exists. Please choose a different username.");
                 break;
             }
         }
-
-        //Checks if password and confpassword is the same
+    
+        // Check if password and confirm password are the same
         if (!password.equals(confpassword)) {
             valid = false;
+            JOptionPane.showMessageDialog(this, "Password and confirmation password do not match.");
         }
-        //Checks if the length of the registered password is valid
+    
+        // Check if the length of the registered password is valid
         if (password.length() < 8 || password.length() > 64) {
             valid = false;
-            JOptionPane.showMessageDialog(this, "Invalid password length. Minimum Lenght: 8, Maximum Length: 64");
+            JOptionPane.showMessageDialog(this, "Invalid password length. Minimum Length: 8, Maximum Length: 64");
         }
-
+    
         if (valid) {
-            frame.registerAction(usernameFld.getText(), passwordFld.getText(), confpassFld.getText());
-            frame.loginNav();
+            // Hash the password before storing it in the database
+            String hashedPassword = SecurityUtils.hashPassword(password);
+            sqlite.addUser(username, hashedPassword);
+            JOptionPane.showMessageDialog(this, "Registration successful.");
+    
+            // Assuming `frame.loginNav()` navigates back to the login screen
+            frame.loginNav();  
             usernameFld.setText("");
             passwordFld.setText("");
             confpassFld.setText("");
         }
-
-    }//GEN-LAST:event_registerBtnActionPerformed
+    }  
+                                               
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
         frame.loginNav();

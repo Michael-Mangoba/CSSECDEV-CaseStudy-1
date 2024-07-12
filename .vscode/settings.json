@@ -1,0 +1,8 @@
+{
+    "java.project.sourcePaths": [
+        "CSSECDV MP\\src"
+    ],
+    "java.project.referencedLibraries": [
+        "CSSECDV MP\\sqlite-jdbc-3.23.1.jar"
+    ]
+}
