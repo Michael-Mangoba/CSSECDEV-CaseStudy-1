@@ -135,17 +135,17 @@ public class Login extends javax.swing.JPanel {
                 String newHashedPassword = SecurityUtils.hashPassword(inputPassword);
                 sqlite.updateUserPassword(userID, newHashedPassword);
                 JOptionPane.showMessageDialog(this, "Password has been updated for enhanced security.");
+                loginAttempts = 0;
             }
         } else {
             loginAttempts++;
             lastAttemptTime = currentTime;
             JOptionPane.showMessageDialog(this, "Login failed; Invalid user ID or password. Attempts remaining: " + (MAX_ATTEMPTS - loginAttempts));
         }
-    
         usernameFld.setText("");
         passwordFld.setText("");
     }
-    //GEN-LAST:event_loginBtnActionPerformed
+                                            
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
         frame.registerNav();
