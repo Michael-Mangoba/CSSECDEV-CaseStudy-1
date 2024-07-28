@@ -148,6 +148,8 @@ public class Login extends javax.swing.JPanel {
     
         usernameFld.setText("");
         passwordFld.setText("");
+        int test = sqlite.getFailedLoginAttemptsLastHour(inputUsername);
+        JOptionPane.showMessageDialog(this, test);
     }
                                          
 
@@ -166,29 +168,6 @@ public class Login extends javax.swing.JPanel {
         sqlite.addLogs(event, username, desc, timestamp);
     }
 
-    
-    private boolean shouldDisableAccount(String username) {
-        int failedAttempts = 0;
-        long currentTime = System.currentTimeMillis();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        try (BufferedReader br = new BufferedReader(new FileReader("login_audit.log"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.contains(username) && line.contains("failed")) {
-                    String timestamp = line.substring(0, 19); // Extract the timestamp
-                    Date attemptDate = dateFormat.parse(timestamp);
-                    if ((currentTime - attemptDate.getTime()) <= ONE_HOUR) {
-                        failedAttempts++;
-                    }
-                }
-            }
-        } catch (IOException | ParseException e) {
-            System.err.println("Error reading or parsing log file: " + e.getMessage());
-        }
-
-        return failedAttempts >= DISABLED_ATTEMPTS;
-    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

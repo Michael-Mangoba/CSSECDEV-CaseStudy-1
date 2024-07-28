@@ -11,7 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class SQLite {
     
@@ -242,6 +244,33 @@ public class SQLite {
         return logs;
     }
     
+   public int getFailedLoginAttemptsLastHour(String username) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+
+        long currentTimeMillis = System.currentTimeMillis();
+        long oneHourAgoMillis = currentTimeMillis - 3600000; // 1 hour in milliseconds
+
+        String oneHourAgoStr = dateFormat.format(new Date(oneHourAgoMillis));
+        String currentTimeStr = dateFormat.format(new Date(currentTimeMillis));
+
+        String sql = "SELECT COUNT(*) AS attempt_count FROM logs WHERE event='failed_login' AND username='" + username + "' AND desc='Login attempt for admin was failed' AND timestamp BETWEEN '" + oneHourAgoStr + "' AND '" + currentTimeStr + "'";
+        System.out.println("SQL Query: " + sql);
+        
+        int attemptCount = 0;
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                attemptCount = rs.getInt("attempt_count");
+            }
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+
+        return attemptCount;
+    }
+   
     public ArrayList<Product> getProduct(){
         String sql = "SELECT id, name, stock, price FROM product";
         ArrayList<Product> products = new ArrayList<Product>();
