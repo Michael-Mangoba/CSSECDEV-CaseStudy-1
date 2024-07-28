@@ -8,6 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.text.ParseException;
+import java.io.FileReader;
+import java.io.BufferedReader;
 
 public class Login extends javax.swing.JPanel {
 
@@ -17,7 +20,8 @@ public class Login extends javax.swing.JPanel {
     private long lastAttemptTime = 0;
     private static final int MAX_ATTEMPTS = 5;
     private static final long COOLDOWN_PERIOD = 5 * 60 * 1000;
-
+    private static final int DISABLED_ATTEMPTS = 15;
+    private static final long ONE_HOUR = 60 * 60 * 1000;
     public Login() {
         initComponents();
     }
@@ -145,7 +149,7 @@ public class Login extends javax.swing.JPanel {
         usernameFld.setText("");
         passwordFld.setText("");
     }
-    //GEN-LAST:event_loginBtnActionPerformed
+                                         
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
         frame.registerNav();
@@ -154,16 +158,38 @@ public class Login extends javax.swing.JPanel {
     }//GEN-LAST:event_registerBtnActionPerformed
 
     private void logAttempt(String username, boolean success) {
-        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        String logMessage = String.format("%s: Login attempt for %s was %s\n", timestamp, username, success ? "successful" : "failed");
-
-        try (FileWriter fw = new FileWriter("login_audit.log", true)) {
-            fw.write(logMessage);
-        } catch (IOException e) {
-            System.err.println("Error writing to log file: " + e.getMessage());
-        }
+        SQLite sqlite = new SQLite();
+        SimpleDateFormat dateFormat = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss.SSS");
+        String event = success ? "successful_login" : "failed_login";
+        String desc = String.format("Login attempt for %s was %s", username, success ? "successful" : "failed");
+        String timestamp = dateFormat.format(new Date());
+        sqlite.addLogs(event, username, desc, timestamp);
     }
 
+    
+    private boolean shouldDisableAccount(String username) {
+        int failedAttempts = 0;
+        long currentTime = System.currentTimeMillis();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        try (BufferedReader br = new BufferedReader(new FileReader("login_audit.log"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.contains(username) && line.contains("failed")) {
+                    String timestamp = line.substring(0, 19); // Extract the timestamp
+                    Date attemptDate = dateFormat.parse(timestamp);
+                    if ((currentTime - attemptDate.getTime()) <= ONE_HOUR) {
+                        failedAttempts++;
+                    }
+                }
+            }
+        } catch (IOException | ParseException e) {
+            System.err.println("Error reading or parsing log file: " + e.getMessage());
+        }
+
+        return failedAttempts >= DISABLED_ATTEMPTS;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton loginBtn;
