@@ -271,6 +271,36 @@ public class SQLite {
         return attemptCount;
     }
    
+    public boolean isLast20AttemptsFailed(String username) {
+        String sql = "SELECT * FROM logs WHERE event IN ('successful_login', 'failed_login') AND username='" + username + "' ORDER BY timestamp DESC LIMIT 20";
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            int failedCount = 0;
+            int totalCount = 0;
+
+            while (rs.next()) {
+                totalCount++;
+                if (rs.getString("desc").contains("was failed")) {
+                    failedCount++;
+                }
+            }
+
+            System.out.println("Total attempts checked: " + totalCount);
+            System.out.println("Failed attempts: " + failedCount);
+
+            return totalCount == 20 && failedCount == 20;
+
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+
+        return false;
+    }
+   
+   
     public ArrayList<Product> getProduct(){
         String sql = "SELECT id, name, stock, price FROM product";
         ArrayList<Product> products = new ArrayList<Product>();
