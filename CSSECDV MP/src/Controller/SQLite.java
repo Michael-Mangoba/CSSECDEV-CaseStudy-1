@@ -314,7 +314,40 @@ public class SQLite {
         }
     }
     
-    
+    public void setLock(String username) {
+        String selectSql = "SELECT locked FROM users WHERE username = ?";
+        String updateSql = "UPDATE users SET locked = ? WHERE username = ?";
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             PreparedStatement selectStmt = conn.prepareStatement(selectSql);
+             PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+
+            // Fetch current lock status
+            selectStmt.setString(1, username);
+            ResultSet rs = selectStmt.executeQuery();
+
+            if (rs.next()) {
+                int currentLockStatus = rs.getInt("locked");
+                int newLockStatus = (currentLockStatus == 0) ? 1 : 0;
+
+                // Update lock status
+                updateStmt.setInt(1, newLockStatus);
+                updateStmt.setString(2, username);
+                int affectedRows = updateStmt.executeUpdate();
+
+                if (affectedRows > 0) {
+                    System.out.println("User " + username + " has been " + (newLockStatus == 1 ? "locked." : "unlocked."));
+                } else {
+                    System.out.println("Failed to update lock status for user " + username);
+                }
+            } else {
+                System.out.println("User " + username + " not found.");
+            }
+
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+    }
    
     public ArrayList<Product> getProduct(){
         String sql = "SELECT id, name, stock, price FROM product";
