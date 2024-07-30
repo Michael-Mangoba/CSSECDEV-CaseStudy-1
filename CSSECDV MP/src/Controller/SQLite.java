@@ -299,7 +299,22 @@ public class SQLite {
 
         return false;
     }
-   
+    
+    public Integer getLock(String username) {
+        String sql = "SELECT locked FROM users WHERE username = '" + username + "'";
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            return rs.next() ? rs.getInt("locked") : null;
+
+        } catch (Exception ex) {
+            System.out.print(ex);
+            return null;  // Error occurred
+        }
+    }
+    
+    
    
     public ArrayList<Product> getProduct(){
         String sql = "SELECT id, name, stock, price FROM product";
