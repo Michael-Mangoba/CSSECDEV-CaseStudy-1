@@ -229,9 +229,15 @@ public class MgmtProduct extends javax.swing.JPanel {
             int result = JOptionPane.showConfirmDialog(null, message, "EDIT PRODUCT", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
 
             if (result == JOptionPane.OK_OPTION) {
+                SQLite sqlite = new SQLite();
+                Product product = sqlite.getProduct((String) tableModel.getValueAt(table.getSelectedRow(), 0));
+                product.setName(nameFld.getText());
+                product.setStock(Integer.parseInt(stockFld.getText()));
+                product.setPrice(Float.parseFloat(priceFld.getText()));
                 System.out.println(nameFld.getText());
                 System.out.println(stockFld.getText());
                 System.out.println(priceFld.getText());
+                this.init();
             }
         }
     }//GEN-LAST:event_editBtnActionPerformed
