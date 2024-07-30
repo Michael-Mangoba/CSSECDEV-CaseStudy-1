@@ -436,18 +436,19 @@ public class SQLite {
     
     public void updateProduct(Product product) {
         // Construct the SQL UPDATE statement
-        String sql = "UPDATE product SET stock = " + product.getStock() +
+        String sql = "UPDATE product SET name = '" + product.getName() + 
+                     "', stock = " + product.getStock() +
                      ", price = " + product.getPrice() +
-                     " WHERE name = '" + product.getName() + "';";
+                     " WHERE id = " + product.getId() + ";";
 
         try (Connection conn = DriverManager.getConnection(driverURL);
              Statement stmt = conn.createStatement()) {
             int rowsAffected = stmt.executeUpdate(sql);
 
             if (rowsAffected > 0) {
-                System.out.println("Product updated successfully: " + product.getName());
+                System.out.println("Product updated successfully: ID " + product.getId());
             } else {
-                System.out.println("Product not found: " + product.getName());
+                System.out.println("Product not found with ID: " + product.getId());
             }
         } catch (Exception ex) {
             System.out.println("Error updating product: " + ex.getMessage());
