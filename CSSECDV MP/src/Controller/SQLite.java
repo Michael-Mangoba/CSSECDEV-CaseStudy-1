@@ -264,33 +264,6 @@ public class SQLite {
         }
         return logs;
     }
-    
-   public int getFailedLoginAttemptsLastHour(String username) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-
-        long currentTimeMillis = System.currentTimeMillis();
-        long oneHourAgoMillis = currentTimeMillis - 3600000; // 1 hour in milliseconds
-
-        String oneHourAgoStr = dateFormat.format(new Date(oneHourAgoMillis));
-        String currentTimeStr = dateFormat.format(new Date(currentTimeMillis));
-
-        String sql = "SELECT COUNT(*) AS attempt_count FROM logs WHERE event='failed_login' AND username='" + username + "' AND desc='Login attempt for admin was failed' AND timestamp BETWEEN '" + oneHourAgoStr + "' AND '" + currentTimeStr + "'";
-        System.out.println("SQL Query: " + sql);
-        
-        int attemptCount = 0;
-
-        try (Connection conn = DriverManager.getConnection(driverURL);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            if (rs.next()) {
-                attemptCount = rs.getInt("attempt_count");
-            }
-        } catch (Exception ex) {
-            System.out.print(ex);
-        }
-
-        return attemptCount;
-    }
    
     public boolean isLast20AttemptsFailed(String username) {
         String sql = "SELECT * FROM logs WHERE event IN ('successful_login', 'failed_login') AND username='" + username + "' ORDER BY timestamp DESC LIMIT 20";
@@ -408,6 +381,7 @@ public class SQLite {
         } catch (Exception ex) {}
         return users;
     }
+   
     
     public void addUser(String username, String password, int role) {
         String sql = "INSERT INTO users(username,password,role) VALUES('" + username + "','" + password + "','" + role + "')";
@@ -449,22 +423,35 @@ public class SQLite {
     }
 
     public void updateUserPassword(int userID, String newHashedPassword) {
-    // SQL statement to update the password for a specific user ID
-    String sql = "UPDATE users SET password = ? WHERE id = ?;";
+        // SQL statement to update the password for a specific user ID
+        String sql = "UPDATE users SET password = ? WHERE id = ?;";
 
-    try (Connection conn = DriverManager.getConnection(driverURL);
-         PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        // Set parameters for the prepared statement
-        pstmt.setString(1, newHashedPassword);
-        pstmt.setInt(2, userID);
-        // Execute the update
-        pstmt.executeUpdate();
-        System.out.println("Password updated for user ID: " + userID);
-    } catch (SQLException e) {
-        System.out.println("Error updating user password: " + e.getMessage());
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Set parameters for the prepared statement
+            pstmt.setString(1, newHashedPassword);
+            pstmt.setInt(2, userID);
+            // Execute the update
+            pstmt.executeUpdate();
+            System.out.println("Password updated for user ID: " + userID);
+        } catch (SQLException e) {
+            System.out.println("Error updating user password: " + e.getMessage());
+        }
     }
-}
 
+    public void updateUserRole(String username, int role) {
+        String sql = "UPDATE users SET role = ? WHERE username = ?";
 
-    
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, role);
+            pstmt.setString(2, username);
+            pstmt.executeUpdate();
+
+            System.out.println("Updated role for user: " + username);
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+    }
 }
