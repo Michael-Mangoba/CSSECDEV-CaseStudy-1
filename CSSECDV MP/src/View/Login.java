@@ -101,17 +101,25 @@ public class Login extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {                                         
         long currentTime = System.currentTimeMillis();
-        if (loginAttempts >= MAX_ATTEMPTS && currentTime - lastAttemptTime < COOLDOWN_PERIOD) {
-            long waitTime = (COOLDOWN_PERIOD - (currentTime - lastAttemptTime)) / 1000;
-            JOptionPane.showMessageDialog(this, "Too many failed attempts. Please wait " + waitTime + " seconds before trying again.");
-            logAttempt(usernameFld.getText(), false);
-            return;
-        }
-    
         SQLite sqlite = new SQLite();
         ArrayList<User> users = sqlite.getUsers();
         String inputUsername = usernameFld.getText();
         String inputPassword = passwordFld.getText();
+        
+        if(sqlite.getLock(inputUsername) == 1){
+            JOptionPane.showMessageDialog(this, "Login failed; User is disabled, please communicate with an Admin in order to re-enable the account");
+            return;
+        }
+        
+        if (loginAttempts >= MAX_ATTEMPTS && currentTime - lastAttemptTime < COOLDOWN_PERIOD) {
+            long waitTime = (COOLDOWN_PERIOD - (currentTime - lastAttemptTime)) / 1000;
+            JOptionPane.showMessageDialog(this, "Too many failed attempts. Please wait " + waitTime + " seconds before trying again.");
+            //Not sure about this
+            logAttempt(usernameFld.getText(), false);
+            return;
+        }
+    
+        
     
         int userID = -1;
         boolean loginSuccess = false;
@@ -141,17 +149,17 @@ public class Login extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "Password has been updated for enhanced security.");
             }
         } else {
+
             loginAttempts++;
             lastAttemptTime = currentTime;
             JOptionPane.showMessageDialog(this, "Login failed; Invalid user ID or password. Attempts remaining: " + (MAX_ATTEMPTS - loginAttempts));
         }
-    
+        
         usernameFld.setText("");
         passwordFld.setText("");
-        int test = sqlite.getFailedLoginAttemptsLastHour(inputUsername);
-        JOptionPane.showMessageDialog(this, test);
     }
-                                         
+    
+
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
         frame.registerNav();
@@ -167,6 +175,7 @@ public class Login extends javax.swing.JPanel {
         String timestamp = dateFormat.format(new Date());
         sqlite.addLogs(event, username, desc, timestamp);
     }
+    
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
