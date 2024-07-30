@@ -455,7 +455,24 @@ public class SQLite {
         }
     }
     
-    
+    public void removeProduct(String name) {
+        String sql = "DELETE FROM product WHERE name='" + name + "';";
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement()) {
+
+            int rowsAffected = stmt.executeUpdate(sql);
+
+            if (rowsAffected > 0) {
+                System.out.println("Product '" + name + "' was successfully removed.");
+            } else {
+                System.out.println("No product found with the name '" + name + "'.");
+            }
+
+        } catch (Exception ex) {
+            System.out.println("Error removing product: " + ex.getMessage());
+        }
+    }
 
     public void updateUserPassword(int userID, String newHashedPassword) {
         // SQL statement to update the password for a specific user ID
