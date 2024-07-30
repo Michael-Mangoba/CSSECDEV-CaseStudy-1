@@ -250,6 +250,8 @@ public class MgmtProduct extends javax.swing.JPanel {
             int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + tableModel.getValueAt(table.getSelectedRow(), 0) + "?", "DELETE PRODUCT", JOptionPane.YES_NO_OPTION);
             
             if (result == JOptionPane.YES_OPTION) {
+                SQLite sqlite = new SQLite();
+                sqlite.removeProduct((String) tableModel.getValueAt(table.getSelectedRow(), 0));
                 System.out.println(tableModel.getValueAt(table.getSelectedRow(), 0));
                 this.init();
             }
