@@ -5,6 +5,8 @@
  */
 package Model;
 
+import Controller.SQLite;
+
 /**
  *
  * @author beepxD
@@ -43,6 +45,7 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
+        this.updateProduct();
     }
 
     public int getStock() {
@@ -51,6 +54,7 @@ public class Product {
 
     public void setStock(int stock) {
         this.stock = stock;
+        this.updateProduct();
     }
 
     public float getPrice() {
@@ -59,5 +63,11 @@ public class Product {
 
     public void setPrice(float price) {
         this.price = price;
+        this.updateProduct();
+    }
+    
+    private void updateProduct(){
+        SQLite sqlite = new SQLite();
+        sqlite.updateProduct(this);
     }
 }
