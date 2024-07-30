@@ -123,16 +123,13 @@ public class Login extends javax.swing.JPanel {
     
         int userID = -1;
         boolean loginSuccess = false;
-        boolean needsPasswordUpdate = false; // Flag to check if password needs to be updated to hashed version
     
         for (User user : users) {
             // Check if the stored password is already hashed
             if (user.getUsername().equals(inputUsername)) {
-                if (user.getPassword().equals(SecurityUtils.hashPassword(inputPassword)) || user.getPassword().equals(inputPassword)) {
+                if (user.getHashedPassword().equals(SecurityUtils.hashPassword(inputPassword)) || user.getPassword().equals(inputPassword)) {
                     userID = user.getId();
                     loginSuccess = true;
-                    // If password matches and is plain text, set flag to update it to hashed
-                    needsPasswordUpdate = !user.getPassword().equals(SecurityUtils.hashPassword(inputPassword));
                     break;
                 }
             }
@@ -142,12 +139,6 @@ public class Login extends javax.swing.JPanel {
     
         if (loginSuccess) {
             frame.mainNav(); // Navigate to the main frame on successful login
-            if (needsPasswordUpdate) {
-                // Update the password in the database to a hashed version
-                String newHashedPassword = SecurityUtils.hashPassword(inputPassword);
-                sqlite.updateUserPassword(userID, newHashedPassword);
-                JOptionPane.showMessageDialog(this, "Password has been updated for enhanced security.");
-            }
         } else {
             checkDisableUser(inputUsername);
             loginAttempts++;
