@@ -4,7 +4,6 @@ import Controller.SQLite;
 import Model.User;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;  // Import JPasswordField;
 
 public class Register extends javax.swing.JPanel {
 
@@ -135,9 +134,7 @@ public class Register extends javax.swing.JPanel {
         }
     
         if (valid) {
-            // Hash the password before storing it in the database
-            String hashedPassword = SecurityUtils.hashPassword(password);
-            sqlite.addUser(username, hashedPassword);
+            sqlite.addUser(username, password);
             JOptionPane.showMessageDialog(this, "Registration successful.");
     
             // Assuming `frame.loginNav()` navigates back to the login screen
