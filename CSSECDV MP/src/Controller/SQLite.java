@@ -420,14 +420,15 @@ public class SQLite {
     }
     
     public Product getProduct(String name){
-        String sql = "SELECT name, stock, price FROM product WHERE name='" + name + "';";
+        String sql = "SELECT id, name, stock, price FROM product WHERE name='" + name + "';";
         Product product = null;
         try (Connection conn = DriverManager.getConnection(driverURL);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql)){
-            product = new Product(rs.getString("name"),
-                                   rs.getInt("stock"),
-                                   rs.getFloat("price"));
+            product = new Product(  rs.getInt("id"),
+                                    rs.getString("name"),
+                                    rs.getInt("stock"),
+                                    rs.getFloat("price"));
         } catch (Exception ex) {
             System.out.print(ex);
         }
@@ -435,7 +436,6 @@ public class SQLite {
     }
     
     public void updateProduct(Product product) {
-        // Construct the SQL UPDATE statement
         String sql = "UPDATE product SET name = '" + product.getName() + 
                      "', stock = " + product.getStock() +
                      ", price = " + product.getPrice() +
