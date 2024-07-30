@@ -106,8 +106,8 @@ public class Login extends javax.swing.JPanel {
         String inputUsername = usernameFld.getText();
         String inputPassword = passwordFld.getText();
         
-        if(sqlite.getLock(inputUsername) == 1){
-            JOptionPane.showMessageDialog(this, "Login failed; User is disabled, please communicate with an Admin in order to re-enable the account");
+        if(sqlite.getLock(inputUsername) == 1 || sqlite.getUserRole(inputUsername) == 1){
+            JOptionPane.showMessageDialog(this, "Login failed; User is Disabled or Locked, please communicate with an Admin in order to re-enable the account");
             return;
         }
         
@@ -162,7 +162,7 @@ public class Login extends javax.swing.JPanel {
     private void checkDisableUser(String username){
         SQLite sqlite = new SQLite();
         if(sqlite.isLast20AttemptsFailed(username)){
-            sqlite.setLock(username);
+            sqlite.updateUserRole(username, 1);
             JOptionPane.showMessageDialog(this, "User has been disabled");
         }
     }
