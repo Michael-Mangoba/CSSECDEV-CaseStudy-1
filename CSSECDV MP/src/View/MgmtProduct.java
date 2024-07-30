@@ -7,7 +7,9 @@ package View;
 
 import Controller.SQLite;
 import Model.Product;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -185,7 +187,21 @@ public class MgmtProduct extends javax.swing.JPanel {
             int result = JOptionPane.showConfirmDialog(null, message, "PURCHASE PRODUCT", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
 
             if (result == JOptionPane.OK_OPTION) {
+                SQLite sqlite = new SQLite();
+                String productName = tableModel.getValueAt(table.getSelectedRow(), 0).toString();
+                int stockToPurchase = Integer.parseInt(stockFld.getText());
+                String username = "currentUser";
+                String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+                Product product = sqlite.getProduct(productName);
+                product.setStock(product.getStock() - stockToPurchase);
+              
+                /*
+                // Add purchase history
+                
+                sqlite.addHistory(username, productName, stockToPurchase, timestamp);
+                */
                 System.out.println(stockFld.getText());
+                this.init();
             }
         }
     }//GEN-LAST:event_purchaseBtnActionPerformed
