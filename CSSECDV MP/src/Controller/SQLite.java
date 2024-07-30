@@ -381,6 +381,18 @@ public class SQLite {
         } catch (Exception ex) {}
         return users;
     }
+    
+    public int getUserRole(String username) {
+        String sql = "SELECT role FROM users WHERE username = '" + username + "'";
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) return rs.getInt("role");
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+        return -1;
+    }
    
     
     public void addUser(String username, String password, int role) {
