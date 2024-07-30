@@ -149,7 +149,7 @@ public class Login extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "Password has been updated for enhanced security.");
             }
         } else {
-
+            checkDisableUser(inputUsername);
             loginAttempts++;
             lastAttemptTime = currentTime;
             JOptionPane.showMessageDialog(this, "Login failed; Invalid user ID or password. Attempts remaining: " + (MAX_ATTEMPTS - loginAttempts));
@@ -159,7 +159,13 @@ public class Login extends javax.swing.JPanel {
         passwordFld.setText("");
     }
     
-
+    private void checkDisableUser(String username){
+        SQLite sqlite = new SQLite();
+        if(sqlite.isLast20AttemptsFailed(username)){
+            sqlite.setLock(username);
+            JOptionPane.showMessageDialog(this, "User has been disabled");
+        }
+    }
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
         frame.registerNav();
