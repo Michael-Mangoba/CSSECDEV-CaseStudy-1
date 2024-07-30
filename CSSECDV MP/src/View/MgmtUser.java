@@ -203,7 +203,10 @@ public class MgmtUser extends javax.swing.JPanel {
             int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + tableModel.getValueAt(table.getSelectedRow(), 0) + "?", "DELETE USER", JOptionPane.YES_NO_OPTION);
             
             if (result == JOptionPane.YES_OPTION) {
+                SQLite sqlite = new SQLite();
+                sqlite.removeUser((String) tableModel.getValueAt(table.getSelectedRow(), 0));
                 System.out.println(tableModel.getValueAt(table.getSelectedRow(), 0));
+                this.init();
             }
         }
     }//GEN-LAST:event_deleteBtnActionPerformed
@@ -245,6 +248,7 @@ public class MgmtUser extends javax.swing.JPanel {
                     sqlite.updateUserPassword((String) tableModel.getValueAt(table.getSelectedRow(), 0), password.getText());
                     System.out.println(password.getText());
                     System.out.println(confpass.getText());
+                    this.init();
                 }else{
                     JOptionPane.showMessageDialog(this, "Password and confirmation password do not match.");
                 }
