@@ -466,4 +466,16 @@ public class SQLite {
             System.out.print(ex);
         }
     }
+    
+    public void updateUserPassword(String username, String password) {
+        String sql = "UPDATE users SET password = '" + password + "' WHERE username = '" + username + "'";
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate(sql);
+            System.out.println("Password updated successfully for user: " + username);
+        } catch (Exception ex) {
+            System.out.println("Error updating password: " + ex.getMessage());
+        }
+    }
 }
