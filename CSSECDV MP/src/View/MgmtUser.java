@@ -240,8 +240,14 @@ public class MgmtUser extends javax.swing.JPanel {
             int result = JOptionPane.showConfirmDialog(null, message, "CHANGE PASSWORD", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
             
             if (result == JOptionPane.OK_OPTION) {
-                System.out.println(password.getText());
-                System.out.println(confpass.getText());
+                if(password.getText().equals(confpass.getText())){
+                    SQLite sqlite = new SQLite();
+                    sqlite.updateUserPassword((String) tableModel.getValueAt(table.getSelectedRow(), 0), password.getText());
+                    System.out.println(password.getText());
+                    System.out.println(confpass.getText());
+                }else{
+                    JOptionPane.showMessageDialog(this, "Password and confirmation password do not match.");
+                }
             }
         }
     }//GEN-LAST:event_chgpassBtnActionPerformed
