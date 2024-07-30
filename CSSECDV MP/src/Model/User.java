@@ -1,5 +1,7 @@
 package Model;
 
+import View.SecurityUtils;
+
 public class User {
     private int id;
     private String username;
@@ -35,9 +37,13 @@ public class User {
     public void setUsername(String username) {
         this.username = username;
     }
-
+    
     public String getPassword() {
         return password;
+    }
+    
+    public String getHashedPassword() {
+        return SecurityUtils.hashPassword(password);
     }
 
     public void setPassword(String password) {
