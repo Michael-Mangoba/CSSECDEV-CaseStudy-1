@@ -12,6 +12,16 @@ public class Frame extends javax.swing.JFrame {
         initComponents();
     }
 
+    private Session session;
+
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

@@ -8,17 +8,13 @@ import javax.swing.JOptionPane;
 public class Register extends javax.swing.JPanel {
 
     public Frame frame;
-    
-    
 
     public Register() {
         initComponents();
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
         registerBtn = new javax.swing.JButton();
         passwordFld = new javax.swing.JTextField();
         usernameFld = new javax.swing.JTextField();
@@ -26,7 +22,7 @@ public class Register extends javax.swing.JPanel {
         confpassFld = new javax.swing.JTextField();
         backBtn = new javax.swing.JButton();
 
-        registerBtn.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        registerBtn.setFont(new java.awt.Font("Tahoma", 1, 24));
         registerBtn.setText("REGISTER");
         registerBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -35,26 +31,26 @@ public class Register extends javax.swing.JPanel {
         });
 
         passwordFld.setBackground(new java.awt.Color(240, 240, 240));
-        passwordFld.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        passwordFld.setFont(new java.awt.Font("Tahoma", 0, 18));
         passwordFld.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        passwordFld.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true), "PASSWORD", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        passwordFld.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true), "PASSWORD", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12)));
 
         usernameFld.setBackground(new java.awt.Color(240, 240, 240));
-        usernameFld.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        usernameFld.setFont(new java.awt.Font("Tahoma", 0, 18));
         usernameFld.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        usernameFld.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true), "USERNAME", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        usernameFld.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true), "USERNAME", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12)));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 48));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("SECURITY Svcs");
         jLabel1.setToolTipText("");
 
         confpassFld.setBackground(new java.awt.Color(240, 240, 240));
-        confpassFld.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        confpassFld.setFont(new java.awt.Font("Tahoma", 0, 18));
         confpassFld.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        confpassFld.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true), "CONFIRM PASSWORD", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        confpassFld.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true), "CONFIRM PASSWORD", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12)));
 
-        backBtn.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        backBtn.setFont(new java.awt.Font("Tahoma", 1, 12));
         backBtn.setText("<Back");
         backBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -100,18 +96,18 @@ public class Register extends javax.swing.JPanel {
                 .addComponent(registerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(64, Short.MAX_VALUE))
         );
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
-    private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {                                            
+    private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {
         SQLite sqlite = new SQLite();
         ArrayList<User> users = sqlite.getUsers();
-    
+
         String password = passwordFld.getText();
         String confpassword = confpassFld.getText();
         String username = usernameFld.getText();
-    
+
         boolean valid = true;
-    
+
         // Check if Username already exists within the database
         for (User user : users) {
             if (user.getUsername().equalsIgnoreCase(username)) {
@@ -120,43 +116,45 @@ public class Register extends javax.swing.JPanel {
                 break;
             }
         }
-    
+
         // Check if password and confirm password are the same
         if (!password.equals(confpassword)) {
             valid = false;
             JOptionPane.showMessageDialog(this, "Password and confirmation password do not match.");
         }
-    
+
         // Check if the length of the registered password is valid
-        if (password.length() < 8 || password.length() > 64) {
+        if (!SecurityUtils.isValidPassword(password)) {
             valid = false;
-            JOptionPane.showMessageDialog(this, "Invalid password length. Minimum Length: 8, Maximum Length: 64");
+            JOptionPane.showMessageDialog(this, "Invalid password. Minimum 8 characters, at least one uppercase letter, one lowercase letter, and one number.");
         }
-    
+
+        // Check if username is valid
+        if (!SecurityUtils.isValidUsername(username)) {
+            valid = false;
+            JOptionPane.showMessageDialog(this, "Invalid username. Must be 3-20 characters long and contain only letters, numbers, and underscores.");
+        }
+
         if (valid) {
-            sqlite.addUser(username, password);
+            sqlite.addUser(username, SecurityUtils.hashPassword(password));
             JOptionPane.showMessageDialog(this, "Registration successful.");
-    
+
             // Assuming `frame.loginNav()` navigates back to the login screen
             frame.loginNav();  
             usernameFld.setText("");
             passwordFld.setText("");
             confpassFld.setText("");
         }
-    }  
-                                               
+    }
 
-    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
+    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {
         frame.loginNav();
-    }//GEN-LAST:event_backBtnActionPerformed
+    }
 
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backBtn;
     private javax.swing.JTextField confpassFld;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField passwordFld;
     private javax.swing.JButton registerBtn;
     private javax.swing.JTextField usernameFld;
-    // End of variables declaration//GEN-END:variables
 }
