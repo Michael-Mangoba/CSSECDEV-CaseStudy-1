@@ -3,22 +3,20 @@ package Model;
 import View.SecurityUtils;
 
 public class User {
-    public enum Role {
-        UNREGISTERED, DISABLED, CLIENT, STAFF, MANAGER, ADMIN
-    }
-
     private int id;
     private String username;
     private String password;
-    private Role role = Role.CLIENT;
+    private int role = 2;
     private int locked = 0;
 
+    // Constructor for new users without id (e.g., during registration)
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
-    
-    public User(int id, String username, String password, Role role, int locked) {
+
+    // Constructor for existing users with id (e.g., fetched from database)
+    public User(int id, String username, String password, int role, int locked) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -26,6 +24,7 @@ public class User {
         this.locked = locked;
     }
 
+    // Getters and setters
     public int getId() {
         return id;
     }
@@ -54,11 +53,11 @@ public class User {
         this.password = password;
     }
 
-    public Role getRole() {
+    public int getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(int role) {
         this.role = role;
     }
 
@@ -68,20 +67,5 @@ public class User {
 
     public void setLocked(int locked) {
         this.locked = locked;
-    }
-
-    public boolean isAuthorized(String action) {
-        switch (this.role) {
-            case CLIENT:
-                return action.equals("PURCHASE") || action.equals("VIEW_OWN_HISTORY");
-            case STAFF:
-                return action.equals("ADD_PRODUCT") || action.equals("EDIT_PRODUCT") || action.equals("DELETE_PRODUCT");
-            case MANAGER:
-                return action.equals("ADD_PRODUCT") || action.equals("EDIT_PRODUCT") || action.equals("DELETE_PRODUCT") || action.equals("VIEW_ALL_HISTORY");
-            case ADMIN:
-                return action.equals("MANAGE_USERS") || action.equals("VIEW_LOGS");
-            default:
-                return false;
-        }
     }
 }
