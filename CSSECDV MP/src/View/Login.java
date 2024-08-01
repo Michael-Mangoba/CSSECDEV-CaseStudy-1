@@ -4,16 +4,25 @@ import Controller.SQLite;
 import Model.User;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-import java.text.SimpleDateFormat; // Add this import statement
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.text.ParseException;
+import java.io.FileReader;
+import java.io.BufferedReader;
 
 public class Login extends javax.swing.JPanel {
 
     public Frame frame;
+    // Variable declaration
     private int loginAttempts = 0;
     private long lastAttemptTime = 0;
     private static final int MAX_ATTEMPTS = 5;
     private static final long COOLDOWN_PERIOD = 5 * 60 * 1000;
+    private static final int DISABLED_ATTEMPTS = 15;
+    private static final long ONE_HOUR = 60 * 60 * 1000;
 
     public Login() {
         initComponents();
@@ -89,58 +98,49 @@ public class Login extends javax.swing.JPanel {
                     .addComponent(loginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(126, Short.MAX_VALUE))
         );
-    }
+    }// </editor-fold>//GEN-END:initComponents
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {
         long currentTime = System.currentTimeMillis();
         SQLite sqlite = new SQLite();
         ArrayList<User> users = sqlite.getUsers();
-        String inputUsername = usernameFld.getText();
+        String inputUsername = usernameFld.getText().trim();  // Trim the input to avoid leading/trailing space issues
         String inputPassword = passwordFld.getText();
-    
-        // Validate username and password
-        if (!SecurityUtils.isValidUsername(inputUsername) || !SecurityUtils.isValidPassword(inputPassword)) {
-            JOptionPane.showMessageDialog(this, "Invalid username or password format.");
+
+        if(sqlite.getLock(inputUsername) == 1 || sqlite.getUserRole(inputUsername) == 1){
+            JOptionPane.showMessageDialog(this, "Login failed; User is Disabled or Locked, please communicate with an Admin to re-enable the account");
             return;
         }
-    
+
         if (loginAttempts >= MAX_ATTEMPTS && currentTime - lastAttemptTime < COOLDOWN_PERIOD) {
             long waitTime = (COOLDOWN_PERIOD - (currentTime - lastAttemptTime)) / 1000;
             JOptionPane.showMessageDialog(this, "Too many failed attempts. Please wait " + waitTime + " seconds before trying again.");
             logAttempt(inputUsername, false);
             return;
         }
-    
-        int userID = -1;
+
         boolean loginSuccess = false;
-    
+
         for (User user : users) {
-            if (user.getUsername().equals(inputUsername)) {
-                if (user.getPassword().equals(SecurityUtils.hashPassword(inputPassword)) && user.getLocked() == 0) {
-                    userID = user.getId();
-                    loginSuccess = true;
-                    break;
-                }
+            if (user.getUsername().equals(inputUsername) && user.getHashedPassword().equals(SecurityUtils.hashPassword(inputPassword))) {
+                loginSuccess = true;
+                break;
             }
         }
-    
+
         logAttempt(inputUsername, loginSuccess);
-    
+
         if (loginSuccess) {
-            Session session = new Session();
-            SecurityUtils.createSession(session, inputUsername);
-            frame.setSession(session); // Assuming Frame class has a method to set the session
             frame.mainNav(); // Navigate to the main frame on successful login
         } else {
             loginAttempts++;
             lastAttemptTime = currentTime;
             JOptionPane.showMessageDialog(this, "Login failed; Invalid username or password. Attempts remaining: " + (MAX_ATTEMPTS - loginAttempts));
         }
-    
+
         usernameFld.setText("");
         passwordFld.setText("");
     }
-    
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {
         frame.registerNav();
@@ -157,9 +157,11 @@ public class Login extends javax.swing.JPanel {
         sqlite.addLogs(event, username, desc, timestamp);
     }
 
+    // Variables declaration - do not modify                     
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton loginBtn;
     private javax.swing.JTextField passwordFld;
     private javax.swing.JButton registerBtn;
     private javax.swing.JTextField usernameFld;
+    // End of variables declaration                   
 }
