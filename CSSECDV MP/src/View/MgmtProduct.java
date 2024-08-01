@@ -210,11 +210,11 @@ public class MgmtProduct extends javax.swing.JPanel {
                 Product product = sqlite.getProduct(productName);
                 product.setStock(product.getStock() - stockToPurchase);
               
-                /*
+                
                 // Add purchase history
                 
-                sqlite.addHistory(username, productName, stockToPurchase, timestamp);
-                */
+                sqlite.addHistory(currentUser.getUsername(), productName, stockToPurchase, timestamp);
+                
                 System.out.println(stockFld.getText());
                 this.init();
             }
