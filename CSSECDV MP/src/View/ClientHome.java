@@ -25,6 +25,7 @@ public class ClientHome extends javax.swing.JPanel {
     public MgmtLogs mgmtLogs;
     public MgmtProduct mgmtProduct;
     public MgmtUser mgmtUser;
+    private User currentUser;
     
     private CardLayout contentView = new CardLayout();
     
@@ -49,7 +50,11 @@ public class ClientHome extends javax.swing.JPanel {
 //        historyBtn.setVisible(false);
 //        usersBtn.setVisible(false);
 //        productsBtn.setVisible(false);
-//        logsBtn.setVisible(false);
+        logsBtn.setVisible(false);
+    }
+    
+    public void setCurrentUser(User user){
+        this.currentUser = user;
     }
     
     public void showPnl(String panelName){
