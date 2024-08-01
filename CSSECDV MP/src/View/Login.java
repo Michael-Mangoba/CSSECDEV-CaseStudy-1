@@ -97,35 +97,35 @@ public class Login extends javax.swing.JPanel {
         ArrayList<User> users = sqlite.getUsers();
         String inputUsername = usernameFld.getText();
         String inputPassword = passwordFld.getText();
-
+    
         // Validate username and password
         if (!SecurityUtils.isValidUsername(inputUsername) || !SecurityUtils.isValidPassword(inputPassword)) {
             JOptionPane.showMessageDialog(this, "Invalid username or password format.");
             return;
         }
-
+    
         if (loginAttempts >= MAX_ATTEMPTS && currentTime - lastAttemptTime < COOLDOWN_PERIOD) {
             long waitTime = (COOLDOWN_PERIOD - (currentTime - lastAttemptTime)) / 1000;
             JOptionPane.showMessageDialog(this, "Too many failed attempts. Please wait " + waitTime + " seconds before trying again.");
             logAttempt(inputUsername, false);
             return;
         }
-
+    
         int userID = -1;
         boolean loginSuccess = false;
-
+    
         for (User user : users) {
             if (user.getUsername().equals(inputUsername)) {
-                if (user.getHashedPassword().equals(SecurityUtils.hashPassword(inputPassword)) && user.getLocked() == 0) {
+                if (user.getPassword().equals(SecurityUtils.hashPassword(inputPassword)) && user.getLocked() == 0) {
                     userID = user.getId();
                     loginSuccess = true;
                     break;
                 }
             }
         }
-
+    
         logAttempt(inputUsername, loginSuccess);
-
+    
         if (loginSuccess) {
             Session session = new Session();
             SecurityUtils.createSession(session, inputUsername);
@@ -136,10 +136,11 @@ public class Login extends javax.swing.JPanel {
             lastAttemptTime = currentTime;
             JOptionPane.showMessageDialog(this, "Login failed; Invalid username or password. Attempts remaining: " + (MAX_ATTEMPTS - loginAttempts));
         }
-
+    
         usernameFld.setText("");
         passwordFld.setText("");
     }
+    
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {
         frame.registerNav();

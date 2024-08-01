@@ -101,13 +101,13 @@ public class Register extends javax.swing.JPanel {
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {
         SQLite sqlite = new SQLite();
         ArrayList<User> users = sqlite.getUsers();
-
+    
         String password = passwordFld.getText();
         String confpassword = confpassFld.getText();
         String username = usernameFld.getText();
-
+    
         boolean valid = true;
-
+    
         // Check if Username already exists within the database
         for (User user : users) {
             if (user.getUsername().equalsIgnoreCase(username)) {
@@ -116,29 +116,29 @@ public class Register extends javax.swing.JPanel {
                 break;
             }
         }
-
+    
         // Check if password and confirm password are the same
         if (!password.equals(confpassword)) {
             valid = false;
             JOptionPane.showMessageDialog(this, "Password and confirmation password do not match.");
         }
-
+    
         // Check if the length of the registered password is valid
         if (!SecurityUtils.isValidPassword(password)) {
             valid = false;
             JOptionPane.showMessageDialog(this, "Invalid password. Minimum 8 characters, at least one uppercase letter, one lowercase letter, and one number.");
         }
-
+    
         // Check if username is valid
         if (!SecurityUtils.isValidUsername(username)) {
             valid = false;
             JOptionPane.showMessageDialog(this, "Invalid username. Must be 3-20 characters long and contain only letters, numbers, and underscores.");
         }
-
+    
         if (valid) {
             sqlite.addUser(username, SecurityUtils.hashPassword(password));
             JOptionPane.showMessageDialog(this, "Registration successful.");
-
+    
             // Assuming `frame.loginNav()` navigates back to the login screen
             frame.loginNav();  
             usernameFld.setText("");
@@ -146,6 +146,7 @@ public class Register extends javax.swing.JPanel {
             confpassFld.setText("");
         }
     }
+    
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {
         frame.loginNav();
