@@ -211,8 +211,8 @@ public class MgmtProduct extends javax.swing.JPanel {
               
                 
                 // Add purchase history
-                
-                sqlite.addHistory(currentUser.getUsername(), productName, stockToPurchase, timestamp);
+                if(stockToPurchase > 0)
+                    sqlite.addHistory(currentUser.getUsername(), productName, stockToPurchase, timestamp);
                 
                 System.out.println(stockFld.getText());
                 this.init();
