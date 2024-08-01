@@ -245,8 +245,8 @@ public class Frame extends javax.swing.JFrame {
     }
     
     public void mainNav(String username){
-        main.login(username);
-        switch (main.getCurrentUser().getRole()){
+        main.sqlite.login(username);
+        switch (main.sqlite.getCurrentUser().getRole()){
             case 5:
                 adminHomePnl.showPnl("home");
                 contentView.show(Content, "adminHomePnl");

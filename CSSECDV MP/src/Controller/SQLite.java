@@ -33,6 +33,10 @@ public class SQLite {
         return this.currentUser;
     }
     
+    public int getCurrentUserRole(){
+        return this.currentUser.getRole();
+    }
+    
     public void createNewDatabase() {
         try (Connection conn = DriverManager.getConnection(driverURL)) {
             if (conn != null) {
