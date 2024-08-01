@@ -125,9 +125,8 @@ public class Login extends javax.swing.JPanel {
         boolean loginSuccess = false;
     
         for (User user : users) {
-            // Check if the stored password is already hashed
             if (user.getUsername().equals(inputUsername)) {
-                if (user.getHashedPassword().equals(SecurityUtils.hashPassword(inputPassword)) || user.getPassword().equals(inputPassword)) {
+                if (user.getHashedPassword().equals(SecurityUtils.hashPassword(inputPassword))) {
                     userID = user.getId();
                     loginSuccess = true;
                     break;
