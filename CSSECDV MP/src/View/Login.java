@@ -1,5 +1,6 @@
 package View;
 import Controller.SQLite;
+import Controller.Main;
 import Model.User;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -137,7 +138,7 @@ public class Login extends javax.swing.JPanel {
         logAttempt(inputUsername, loginSuccess);
     
         if (loginSuccess) {
-            frame.mainNav(); // Navigate to the main frame on successful login
+            frame.mainNav(inputUsername); // Navigate to the main frame on successful login
         } else {
             checkDisableUser(inputUsername);
             loginAttempts++;
