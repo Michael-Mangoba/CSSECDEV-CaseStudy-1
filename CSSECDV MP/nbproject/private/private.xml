@@ -5,10 +5,12 @@
         <group>
             <file>file:/E:/Documents/CSSECDEV-CaseStudy-1/CSSECDV%20MP/src/View/SecurityUtils.java</file>
             <file>file:/E:/Documents/CSSECDEV-CaseStudy-1/CSSECDV%20MP/src/View/MgmtUser.java</file>
+            <file>file:/E:/Documents/CSSECDEV-CaseStudy-1/CSSECDV%20MP/src/Controller/SQLite.java</file>
             <file>file:/E:/Documents/CSSECDEV-CaseStudy-1/CSSECDV%20MP/src/View/Login.java</file>
             <file>file:/E:/Documents/CSSECDEV-CaseStudy-1/CSSECDV%20MP/src/Controller/Main.java</file>
             <file>file:/E:/Documents/CSSECDEV-CaseStudy-1/CSSECDV%20MP/src/View/Register.java</file>
             <file>file:/E:/Documents/CSSECDEV-CaseStudy-1/CSSECDV%20MP/src/Model/User.java</file>
+            <file>file:/E:/Documents/CSSECDEV-CaseStudy-1/CSSECDV%20MP/src/View/Frame.java</file>
         </group>
     </open-files>
 </project-private>

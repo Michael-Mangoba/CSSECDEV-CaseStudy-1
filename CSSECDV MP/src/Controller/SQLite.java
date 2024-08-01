@@ -8,7 +8,6 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class SQLite {
-
     public int DEBUG_MODE = 0;
     String driverURL = "jdbc:sqlite:" + "database.db";
 
@@ -94,6 +93,54 @@ public class SQLite {
         }
     }
 
+    public void dropHistoryTable() {
+        String sql = "DROP TABLE IF EXISTS history;";
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("Table history in database.db dropped.");
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+    }
+
+    public void dropLogsTable() {
+        String sql = "DROP TABLE IF EXISTS logs;";
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("Table logs in database.db dropped.");
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+    }
+
+    public void dropProductTable() {
+        String sql = "DROP TABLE IF EXISTS product;";
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("Table product in database.db dropped.");
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+    }
+
+    public void dropUserTable() {
+        String sql = "DROP TABLE IF EXISTS users;";
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("Table users in database.db dropped.");
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+    }
+
     public void addHistory(String username, String name, int stock, String timestamp) {
         String sql = "INSERT INTO history(username, name, stock, timestamp) VALUES(?, ?, ?, ?)";
 
@@ -152,6 +199,19 @@ public class SQLite {
         }
     }
 
+    public void removeUser(String username) {
+        String sql = "DELETE FROM users WHERE username = ?";
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            pstmt.executeUpdate();
+            System.out.println("User " + username + " has been deleted.");
+        } catch (SQLException ex) {
+            System.out.println("Error removing user: " + ex.getMessage());
+        }
+    }
+
     public ArrayList<History> getHistory() {
         String sql = "SELECT id, username, name, stock, timestamp FROM history";
         ArrayList<History> histories = new ArrayList<>();
@@ -172,7 +232,73 @@ public class SQLite {
         }
         return histories;
     }
-public void updateUserRole(String username, int role) {
+
+    public ArrayList<History> getHistory(String searchText) {
+        String sql = "SELECT id, username, name, stock, timestamp FROM history WHERE username LIKE ? OR name LIKE ?";
+        ArrayList<History> histories = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, "%" + searchText + "%");
+            pstmt.setString(2, "%" + searchText + "%");
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                histories.add(new History(rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("name"),
+                        rs.getInt("stock"),
+                        rs.getString("timestamp")));
+            }
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+        return histories;
+    }
+
+    public ArrayList<Logs> getLogs() {
+        String sql = "SELECT id, event, username, desc, timestamp FROM logs";
+        ArrayList<Logs> logs = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                logs.add(new Logs(rs.getInt("id"),
+                        rs.getString("event"),
+                        rs.getString("username"),
+                        rs.getString("desc"),
+                        rs.getString("timestamp")));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return logs;
+    }
+
+    public ArrayList<User> getUsers() {
+        String sql = "SELECT id, username, password, role, locked FROM users";
+        ArrayList<User> users = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                users.add(new User(rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getInt("role"),
+                        rs.getInt("locked")));
+            }
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+        return users;
+    }
+
+    public void updateUserRole(String username, int role) {
         String sql = "UPDATE users SET role = ? WHERE username = ?";
 
         try (Connection conn = DriverManager.getConnection(driverURL);
@@ -183,19 +309,6 @@ public void updateUserRole(String username, int role) {
             System.out.println("Updated role for user: " + username);
         } catch (SQLException ex) {
             System.out.println("Error updating user role: " + ex.getMessage());
-        }
-    }
-
-    public void removeUser(String username) {
-        String sql = "DELETE FROM users WHERE username = ?";
-
-        try (Connection conn = DriverManager.getConnection(driverURL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, username);
-            pstmt.executeUpdate();
-            System.out.println("User " + username + " has been deleted.");
-        } catch (SQLException ex) {
-            System.out.println("Error removing user: " + ex.getMessage());
         }
     }
 
@@ -246,50 +359,77 @@ public void updateUserRole(String username, int role) {
         }
     }
 
-
-    public ArrayList<Logs> getLogs() {
-        String sql = "SELECT id, event, username, desc, timestamp FROM logs";
-        ArrayList<Logs> logs = new ArrayList<>();
+    public void addUser(String username, String password) {
+        String sql = "INSERT INTO users(username, password) VALUES(?, ?)";
 
         try (Connection conn = DriverManager.getConnection(driverURL);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                logs.add(new Logs(rs.getInt("id"),
-                        rs.getString("event"),
-                        rs.getString("username"),
-                        rs.getString("desc"),
-                        rs.getString("timestamp")));
-            }
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            pstmt.executeUpdate();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.out.print(ex);
         }
-        return logs;
     }
-    
-    
 
-    public ArrayList<User> getUsers() {
-        String sql = "SELECT id, username, password, role, locked FROM users";
-        ArrayList<User> users = new ArrayList<>();
+    public Product getProduct(String name) {
+        String sql = "SELECT id, name, stock, price FROM product WHERE name = ?";
+        Product product = null;
 
         try (Connection conn = DriverManager.getConnection(driverURL);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            ResultSet rs = pstmt.executeQuery();
 
-            while (rs.next()) {
-                users.add(new User(rs.getInt("id"),
-                        rs.getString("username"),
-                        rs.getString("password"),
-                        rs.getInt("role"),
-                        rs.getInt("locked")));
+            if (rs.next()) {
+                product = new Product(rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("stock"),
+                        rs.getFloat("price"));
             }
         } catch (Exception ex) {
             System.out.print(ex);
         }
-        return users;
+        return product;
     }
 
-    // Add other necessary methods for session management and user handling
+    public void updateProduct(Product product) {
+        String sql = "UPDATE product SET name = ?, stock = ?, price = ? WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, product.getName());
+            pstmt.setInt(2, product.getStock());
+            pstmt.setFloat(3, product.getPrice());
+            pstmt.setInt(4, product.getId());
+
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Product updated successfully: ID " + product.getId());
+            } else {
+                System.out.println("Product not found with ID: " + product.getId());
+            }
+        } catch (SQLException ex) {
+            System.out.println("Error updating product: " + ex.getMessage());
+        }
+    }
+
+    public void removeProduct(String name) {
+        String sql = "DELETE FROM product WHERE name = ?";
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            int rowsAffected = pstmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Product '" + name + "' was successfully removed.");
+            } else {
+                System.out.println("No product found with the name '" + name + "'.");
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("Error removing product: " + ex.getMessage());
+        }
+    }
 }

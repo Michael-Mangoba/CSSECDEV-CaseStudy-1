@@ -4,7 +4,6 @@ import Model.History;
 import Model.Logs;
 import Model.Product;
 import Model.User;
-import Model.User.Role;
 import View.Frame;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -45,11 +44,11 @@ public class Main {
         sqlite.addProduct("Firewall", 3, 1000.0);
         sqlite.addProduct("Scanner", 10, 100.0);
 
-        sqlite.addUser("admin", "qwerty1234", Role.ADMIN.ordinal());
-        sqlite.addUser("manager", "qwerty1234", Role.MANAGER.ordinal());
-        sqlite.addUser("staff", "qwerty1234", Role.STAFF.ordinal());
-        sqlite.addUser("client1", "qwerty1234", Role.CLIENT.ordinal());
-        sqlite.addUser("client2", "qwerty1234", Role.CLIENT.ordinal());
+        sqlite.addUser("admin", "qwerty1234", 5);
+        sqlite.addUser("manager", "qwerty1234", 4);
+        sqlite.addUser("staff", "qwerty1234", 3);
+        sqlite.addUser("client1", "qwerty1234", 2);
+        sqlite.addUser("client2", "qwerty1234", 2);
 
         ArrayList<History> histories = sqlite.getHistory();
         for (History history : histories) {
@@ -63,9 +62,9 @@ public class Main {
         ArrayList<Logs> logs = sqlite.getLogs();
         for (Logs log : logs) {
             System.out.println("===== Logs " + log.getId() + " =====");
-            System.out.println(" Username: " + log.getEvent());
-            System.out.println(" Password: " + log.getUsername());
-            System.out.println(" Role: " + log.getDesc());
+            System.out.println(" Event: " + log.getEvent());
+            System.out.println(" Username: " + log.getUsername());
+            System.out.println(" Description: " + log.getDesc());
             System.out.println(" Timestamp: " + log.getTimestamp());
         }
 
@@ -82,7 +81,7 @@ public class Main {
             System.out.println("===== User " + user.getId() + " =====");
             System.out.println(" Username: " + user.getUsername());
             System.out.println(" Password: " + user.getPassword());
-            System.out.println(" Role: " + Role.values()[user.getRole()]);
+            System.out.println(" Role: " + user.getRole());
             System.out.println(" Locked: " + user.getLocked());
         }
         */
