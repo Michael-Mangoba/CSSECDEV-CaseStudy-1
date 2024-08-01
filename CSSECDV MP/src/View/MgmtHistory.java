@@ -55,7 +55,7 @@ public class MgmtHistory extends javax.swing.JPanel {
         
 //      LOAD CONTENTS
         ArrayList<History> history;
-        if(sessionRole == 4 || sessionRole == 3){
+        if(sessionRole == 4){
             history = sqlite.getHistory();
         } else{
             history = sqlite.getUserHistory(currentUser.getUsername());
@@ -189,7 +189,7 @@ public class MgmtHistory extends javax.swing.JPanel {
 
 //          LOAD CONTENTS
             ArrayList<History> history;
-            if(sessionRole == 4 || sessionRole == 3){
+            if(sessionRole == 4){
                 history = sqlite.getHistory(searchFld.getText());
             }else{
                 history = sqlite.getUserHistory(currentUser.getUsername(), searchFld.getText());

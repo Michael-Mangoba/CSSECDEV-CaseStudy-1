@@ -47,13 +47,15 @@ public class ManagerHome extends javax.swing.JPanel {
         
 //        UNCOMMENT TO DISABLE BUTTONS
 //        historyBtn.setVisible(false);
-//        usersBtn.setVisible(false);
+        usersBtn.setVisible(false);
 //        productsBtn.setVisible(false);
-//        logsBtn.setVisible(false);
+        logsBtn.setVisible(false);
     }
     
     public void setCurrentUser(User user){
         this.currentUser = user;
+        mgmtProduct.setCurrentUser(user);
+        mgmtHistory.setCurrentUser(user);
     }
     
     public void showPnl(String panelName){
