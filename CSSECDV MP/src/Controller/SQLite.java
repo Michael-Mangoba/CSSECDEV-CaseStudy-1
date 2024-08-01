@@ -264,6 +264,28 @@ public class SQLite {
         }
         return logs;
     }
+    
+    public User getUser(String username) {
+        String sql = "SELECT id, username, password, role, locked FROM users WHERE username = '" + username + "'";
+        User user = null;
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                user = new User(rs.getInt("id"),
+                                rs.getString("username"),
+                                rs.getString("password"),
+                                rs.getInt("role"),
+                                rs.getInt("locked"));
+            }
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+
+        return user;
+    }
    
     public boolean isLast20AttemptsFailed(String username) {
         String sql = "SELECT * FROM logs WHERE event IN ('successful_login', 'failed_login') AND username='" + username + "' ORDER BY timestamp DESC LIMIT 20";
