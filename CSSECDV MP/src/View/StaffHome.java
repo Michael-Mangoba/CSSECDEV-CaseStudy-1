@@ -25,6 +25,7 @@ public class StaffHome extends javax.swing.JPanel {
     public MgmtLogs mgmtLogs;
     public MgmtProduct mgmtProduct;
     public MgmtUser mgmtUser;
+    private User currentUser;
     
     private CardLayout contentView = new CardLayout();
     
@@ -50,6 +51,10 @@ public class StaffHome extends javax.swing.JPanel {
 //        usersBtn.setVisible(false);
 //        productsBtn.setVisible(false);
 //        logsBtn.setVisible(false);
+    }
+    
+    public void setCurrentUser(User user){
+        this.currentUser = user;
     }
     
     public void showPnl(String panelName){

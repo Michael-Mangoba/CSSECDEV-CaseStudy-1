@@ -25,6 +25,7 @@ public class AdminHome extends javax.swing.JPanel {
     public MgmtLogs mgmtLogs;
     public MgmtProduct mgmtProduct;
     public MgmtUser mgmtUser;
+    private User currentUser;
     
     private CardLayout contentView = new CardLayout();
     
@@ -32,7 +33,7 @@ public class AdminHome extends javax.swing.JPanel {
         initComponents();
     }
     
-    public void init(SQLite sqlite){
+    public void init(SQLite sqlite){   
         mgmtHistory = new MgmtHistory(sqlite);
         mgmtLogs = new MgmtLogs(sqlite);
         mgmtProduct = new MgmtProduct(sqlite);
@@ -46,10 +47,15 @@ public class AdminHome extends javax.swing.JPanel {
         Content.add(this.mgmtLogs, "mgmtLogs");
         
 //        UNCOMMENT TO DISABLE BUTTONS
-//        historyBtn.setVisible(false);
+        historyBtn.setVisible(false);
 //        usersBtn.setVisible(false);
-//        productsBtn.setVisible(false);
+        productsBtn.setVisible(false);
 //        logsBtn.setVisible(false);
+    }
+    
+    public void setCurrentUser(User user){
+        this.currentUser = user;
+        mgmtUser.setCurrentUser(user);
     }
     
     public void showPnl(String panelName){

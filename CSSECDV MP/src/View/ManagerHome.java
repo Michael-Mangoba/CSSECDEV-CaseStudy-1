@@ -25,6 +25,7 @@ public class ManagerHome extends javax.swing.JPanel {
     public MgmtLogs mgmtLogs;
     public MgmtProduct mgmtProduct;
     public MgmtUser mgmtUser;
+    private User currentUser;
     
     private CardLayout contentView = new CardLayout();
     
@@ -37,7 +38,6 @@ public class ManagerHome extends javax.swing.JPanel {
         mgmtLogs = new MgmtLogs(sqlite);
         mgmtProduct = new MgmtProduct(sqlite);
         mgmtUser = new MgmtUser(sqlite);
-    
         Content.setLayout(contentView);
         Content.add(new Home("WELCOME MANAGER!", new java.awt.Color(153,102,255)), "home");
         Content.add(mgmtUser, "mgmtUser");
@@ -50,6 +50,10 @@ public class ManagerHome extends javax.swing.JPanel {
 //        usersBtn.setVisible(false);
 //        productsBtn.setVisible(false);
 //        logsBtn.setVisible(false);
+    }
+    
+    public void setCurrentUser(User user){
+        this.currentUser = user;
     }
     
     public void showPnl(String panelName){

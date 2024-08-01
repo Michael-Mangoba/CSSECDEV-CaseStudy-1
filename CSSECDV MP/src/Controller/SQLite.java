@@ -19,10 +19,11 @@ public class SQLite {
     
     public int DEBUG_MODE = 0;
     String driverURL = "jdbc:sqlite:" + "database.db";
-    public User currentUser;
+    private User currentUser;
         
     public void login(String username){
-        this.currentUser = this.getUser(username);
+        currentUser = this.getUser(username);
+        System.out.print("User " + this.currentUser.getUsername());
     }
     
     public void logout(){
@@ -30,11 +31,18 @@ public class SQLite {
     }
     
     public User getCurrentUser(){
-        return this.currentUser;
+        return currentUser;
+    }
+    
+    public int checkUserNull(){
+        if(currentUser == null){
+            return 1;
+        }
+        return 0;
     }
     
     public int getCurrentUserRole(){
-        return this.currentUser.getRole();
+        return currentUser.getRole();
     }
     
     public void createNewDatabase() {

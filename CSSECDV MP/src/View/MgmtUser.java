@@ -24,6 +24,8 @@ public class MgmtUser extends javax.swing.JPanel {
 
     public SQLite sqlite;
     public DefaultTableModel tableModel;
+    private User currentUser;
+    private int sessionRole;
     
     public MgmtUser(SQLite sqlite) {
         initComponents();
@@ -32,27 +34,52 @@ public class MgmtUser extends javax.swing.JPanel {
         table.getTableHeader().setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14));
         
 //        UNCOMMENT TO DISABLE BUTTONS
-//        editBtn.setVisible(false);
-//        deleteBtn.setVisible(false);
-//        lockBtn.setVisible(false);
-//        chgpassBtn.setVisible(false);
+        editRoleBtn.setVisible(false);
+        deleteBtn.setVisible(false);
+        lockBtn.setVisible(false);
+        //chgpassBtn.setVisible(false);
     }
     
+    public void setCurrentUser(User user){
+        this.currentUser = user;
+        this.sessionRole = currentUser.getRole();
+    }
+    
+    
     public void init(){
+        if(sessionRole == 5){
+            editRoleBtn.setVisible(true);
+            deleteBtn.setVisible(true);
+            lockBtn.setVisible(true);
+        }
+        
+        
         //      CLEAR TABLE
         for(int nCtr = tableModel.getRowCount(); nCtr > 0; nCtr--){
             tableModel.removeRow(0);
         }
         
 //      LOAD CONTENTS
-        ArrayList<User> users = sqlite.getUsers();
-        for(int nCtr = 0; nCtr < users.size(); nCtr++){
+        
+        if(sessionRole == 5){
+            ArrayList<User> users = sqlite.getUsers();
+            for(int nCtr = 0; nCtr < users.size(); nCtr++){
             tableModel.addRow(new Object[]{
                 users.get(nCtr).getUsername(), 
                 users.get(nCtr).getPassword(), 
                 users.get(nCtr).getRole(), 
                 users.get(nCtr).getLocked()});
         }
+        }else{
+            User user = sqlite.getUser(currentUser.getUsername());
+            tableModel.addRow(new Object[]{
+                user.getUsername(), 
+                user.getPassword(), 
+                user.getRole(), 
+                user.getLocked()
+            });
+        }
+        
     }
 
     public void designer(JTextField component, String text){
