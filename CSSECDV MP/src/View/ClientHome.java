@@ -56,6 +56,8 @@ public class ClientHome extends javax.swing.JPanel {
     public void setCurrentUser(User user){
         this.currentUser = user;
         mgmtUser.setCurrentUser(user);
+        mgmtProduct.setCurrentUser(user);
+        mgmtHistory.setCurrentUser(user);
     }
     
     public void showPnl(String panelName){

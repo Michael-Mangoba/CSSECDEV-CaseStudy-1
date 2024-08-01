@@ -205,7 +205,6 @@ public class MgmtProduct extends javax.swing.JPanel {
             if (result == JOptionPane.OK_OPTION) {
                 String productName = tableModel.getValueAt(table.getSelectedRow(), 0).toString();
                 int stockToPurchase = Integer.parseInt(stockFld.getText());
-                String username = "currentUser";
                 String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
                 Product product = sqlite.getProduct(productName);
                 product.setStock(product.getStock() - stockToPurchase);
