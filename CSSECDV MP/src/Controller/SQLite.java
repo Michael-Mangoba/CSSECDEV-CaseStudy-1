@@ -19,6 +19,19 @@ public class SQLite {
     
     public int DEBUG_MODE = 0;
     String driverURL = "jdbc:sqlite:" + "database.db";
+    public User currentUser;
+        
+    public void login(String username){
+        this.currentUser = this.getUser(username);
+    }
+    
+    public void logout(){
+        this.currentUser = null;
+    }
+    
+    public User getCurrentUser(){
+        return this.currentUser;
+    }
     
     public void createNewDatabase() {
         try (Connection conn = DriverManager.getConnection(driverURL)) {

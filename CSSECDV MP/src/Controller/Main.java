@@ -15,22 +15,9 @@ import java.util.Date;
 public class Main {
     
     public SQLite sqlite;
-    public User currentUser;
     
     public static void main(String[] args) {
         new Main().init();
-    }
-    
-    public void login(String username){
-        this.currentUser = sqlite.getUser(username);
-    }
-    
-    public void logout(){
-        this.currentUser = null;
-    }
-    
-    public User getCurrentUser(){
-        return this.currentUser;
     }
     
     public void init(){
