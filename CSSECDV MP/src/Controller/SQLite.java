@@ -185,6 +185,19 @@ public class SQLite {
         }
     }
 
+    public void addUser(String username, String password) {
+        String sql = "INSERT INTO users(username, password) VALUES(?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            pstmt.executeUpdate();
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+    }
+
     public void addUser(String username, String password, int role) {
         String sql = "INSERT INTO users(username, password, role) VALUES(?, ?, ?)";
 
@@ -272,7 +285,7 @@ public class SQLite {
                         rs.getString("timestamp")));
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.out.print(ex);
         }
         return logs;
     }
@@ -359,19 +372,6 @@ public class SQLite {
         }
     }
 
-    public void addUser(String username, String password) {
-        String sql = "INSERT INTO users(username, password) VALUES(?, ?)";
-
-        try (Connection conn = DriverManager.getConnection(driverURL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
-            pstmt.executeUpdate();
-        } catch (Exception ex) {
-            System.out.print(ex);
-        }
-    }
-
     public Product getProduct(String name) {
         String sql = "SELECT id, name, stock, price FROM product WHERE name = ?";
         Product product = null;
@@ -431,5 +431,48 @@ public class SQLite {
         } catch (SQLException ex) {
             System.out.println("Error removing product: " + ex.getMessage());
         }
+    }
+
+    public ArrayList<Product> getProduct() {
+        String sql = "SELECT id, name, stock, price FROM product";
+        ArrayList<Product> products = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                products.add(new Product(rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("stock"),
+                        rs.getFloat("price")));
+            }
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+        return products;
+    }
+
+    public ArrayList<Logs> getLogs(String searchText) {
+        String sql = "SELECT id, event, username, desc, timestamp FROM logs WHERE event LIKE ? OR username LIKE ?";
+        ArrayList<Logs> logs = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, "%" + searchText + "%");
+            pstmt.setString(2, "%" + searchText + "%");
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                logs.add(new Logs(rs.getInt("id"),
+                        rs.getString("event"),
+                        rs.getString("username"),
+                        rs.getString("desc"),
+                        rs.getString("timestamp")));
+            }
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+        return logs;
     }
 }
