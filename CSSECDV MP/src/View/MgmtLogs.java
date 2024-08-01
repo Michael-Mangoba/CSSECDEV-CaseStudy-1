@@ -135,7 +135,6 @@ public class MgmtLogs extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void clearBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearBtnActionPerformed
-        SQLite sqlite = new SQLite();
         sqlite.dropLogsTable();
         System.out.println("Logs table dropped successfully.");
         sqlite.createLogsTable();

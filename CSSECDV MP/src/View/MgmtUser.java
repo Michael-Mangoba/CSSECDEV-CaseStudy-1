@@ -189,7 +189,6 @@ public class MgmtUser extends javax.swing.JPanel {
                 "EDIT USER ROLE", JOptionPane.QUESTION_MESSAGE, null, options, options[(int)tableModel.getValueAt(table.getSelectedRow(), 2) - 1]);
             
             if(result != null){
-                SQLite sqlite = new SQLite();
                 sqlite.updateUserRole((String) tableModel.getValueAt(table.getSelectedRow(), 0), Integer.parseInt(String.valueOf(result.charAt(0))));
                 System.out.println(tableModel.getValueAt(table.getSelectedRow(), 0));
                 System.out.println(result.charAt(0));
@@ -203,7 +202,6 @@ public class MgmtUser extends javax.swing.JPanel {
             int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + tableModel.getValueAt(table.getSelectedRow(), 0) + "?", "DELETE USER", JOptionPane.YES_NO_OPTION);
             
             if (result == JOptionPane.YES_OPTION) {
-                SQLite sqlite = new SQLite();
                 sqlite.removeUser((String) tableModel.getValueAt(table.getSelectedRow(), 0));
                 System.out.println(tableModel.getValueAt(table.getSelectedRow(), 0));
                 this.init();
@@ -221,7 +219,6 @@ public class MgmtUser extends javax.swing.JPanel {
             int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to " + state + " " + tableModel.getValueAt(table.getSelectedRow(), 0) + "?", "DELETE USER", JOptionPane.YES_NO_OPTION);
             
             if (result == JOptionPane.YES_OPTION) {
-                SQLite sqlite = new SQLite();
                 sqlite.setLock((String) tableModel.getValueAt(table.getSelectedRow(), 0));
                 System.out.println(tableModel.getValueAt(table.getSelectedRow(), 0));
                 this.init();
@@ -244,7 +241,6 @@ public class MgmtUser extends javax.swing.JPanel {
             
             if (result == JOptionPane.OK_OPTION) {
                 if(password.getText().equals(confpass.getText())){
-                    SQLite sqlite = new SQLite();
                     sqlite.updateUserPassword((String) tableModel.getValueAt(table.getSelectedRow(), 0), password.getText());
                     System.out.println(password.getText());
                     System.out.println(confpass.getText());
