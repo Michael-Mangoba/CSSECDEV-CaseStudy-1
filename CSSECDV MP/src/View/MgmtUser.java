@@ -219,6 +219,12 @@ public class MgmtUser extends javax.swing.JPanel {
                 sqlite.updateUserRole((String) tableModel.getValueAt(table.getSelectedRow(), 0), Integer.parseInt(String.valueOf(result.charAt(0))));
                 System.out.println(tableModel.getValueAt(table.getSelectedRow(), 0));
                 System.out.println(result.charAt(0));
+                
+                // Add logging
+                String timestamp = new java.sql.Timestamp(System.currentTimeMillis()).toString();
+                String description = "Role of " + (String) tableModel.getValueAt(table.getSelectedRow(), 0) + " changed to " + result + " by " + currentUser.getUsername();
+                sqlite.addLogs("EDIT_ROLE", currentUser.getUsername(), description, timestamp);
+                
                 this.init();
             }
         }
@@ -231,6 +237,13 @@ public class MgmtUser extends javax.swing.JPanel {
             if (result == JOptionPane.YES_OPTION) {
                 sqlite.removeUser((String) tableModel.getValueAt(table.getSelectedRow(), 0));
                 System.out.println(tableModel.getValueAt(table.getSelectedRow(), 0));
+                
+                 // Logging the delete action
+                String event = "User Deletion";
+                String desc = "Deleted user with username: " + (String) tableModel.getValueAt(table.getSelectedRow(), 0) + " by " + currentUser.getUsername();
+                String timestamp = new java.sql.Timestamp(System.currentTimeMillis()).toString();
+                sqlite.addLogs(event, currentUser.getUsername(), desc, timestamp);
+                
                 this.init();
             }
         }
@@ -248,6 +261,14 @@ public class MgmtUser extends javax.swing.JPanel {
             if (result == JOptionPane.YES_OPTION) {
                 sqlite.setLock((String) tableModel.getValueAt(table.getSelectedRow(), 0));
                 System.out.println(tableModel.getValueAt(table.getSelectedRow(), 0));
+                
+                // Logging the lock/unlock action
+                String event = state.equals("lock") ? "User Locked" : "User Unlocked";
+                String desc = state.equals("lock") ? "Locked user with username: " + (String) tableModel.getValueAt(table.getSelectedRow(), 0) : "Unlocked user with username: " + (String) tableModel.getValueAt(table.getSelectedRow(), 0);
+                desc += " by " + currentUser.getUsername();
+                String timestamp = new java.sql.Timestamp(System.currentTimeMillis()).toString();
+                sqlite.addLogs(event, currentUser.getUsername(), desc, timestamp);
+                
                 this.init();
             }
         }
@@ -267,13 +288,20 @@ public class MgmtUser extends javax.swing.JPanel {
             int result = JOptionPane.showConfirmDialog(null, message, "CHANGE PASSWORD", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
             
             if (result == JOptionPane.OK_OPTION) {
-                if(password.getText().equals(confpass.getText())){
+                if(password.getText().equals(confpass.getText()) && (password.getText().length() > 8 && password.getText().length() < 64)){
                     sqlite.updateUserPassword((String) tableModel.getValueAt(table.getSelectedRow(), 0), password.getText());
+                    // Add logging
+                    String currentUsername = currentUser.getUsername();
+                    String timestamp = new java.sql.Timestamp(System.currentTimeMillis()).toString();
+                    String description = "Password for " + (String) tableModel.getValueAt(table.getSelectedRow(), 0) + " changed by " + currentUser.getUsername();
+                    sqlite.addLogs("CHANGE_PASSWORD", currentUsername, description, timestamp);
+                    
+                    
                     System.out.println(password.getText());
                     System.out.println(confpass.getText());
                     this.init();
                 }else{
-                    JOptionPane.showMessageDialog(this, "Password and confirmation password do not match.");
+                    JOptionPane.showMessageDialog(this, "Password and confPassword Invalid");
                 }
             }
         }
