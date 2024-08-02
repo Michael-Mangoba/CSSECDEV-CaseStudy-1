@@ -1,10 +1,13 @@
 package View;
 
 import Controller.Main;
+import Controller.SessionManager;
 import Model.User;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
+
+import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
 public class Frame extends javax.swing.JFrame {
@@ -287,6 +290,15 @@ public class Frame extends javax.swing.JFrame {
       
         frameView.show(Container, "homePnl");
     }
+    // In the Frame class
+
+    private SessionManager sessionManager; // Member variable to hold the session manager
+
+    public void setUserSession(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+        // You could also add more functionality here, such as updating UI elements to reflect the logged-in user status
+    }
+
     
     public void loginNav(){
         frameView.show(Container, "loginPnl");
@@ -298,6 +310,12 @@ public class Frame extends javax.swing.JFrame {
     
     public void registerAction(String username, String password, String confpass){
         main.sqlite.addUser(username, password);
+    }
+
+    public void onSessionExpired() {
+        // You can implement additional logic here to navigate to the login screen
+        loginNav(); // Navigate back to the login screen
+        JOptionPane.showMessageDialog(this, "Session has expired due to inactivity.");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
