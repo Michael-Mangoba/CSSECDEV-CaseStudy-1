@@ -1,6 +1,7 @@
 package View;
 
 import Controller.Main;
+import Controller.SessionManager;
 import Model.User;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -287,6 +288,15 @@ public class Frame extends javax.swing.JFrame {
       
         frameView.show(Container, "homePnl");
     }
+    // In the Frame class
+
+    private SessionManager sessionManager; // Member variable to hold the session manager
+
+    public void setUserSession(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+        // You could also add more functionality here, such as updating UI elements to reflect the logged-in user status
+    }
+
     
     public void loginNav(){
         frameView.show(Container, "loginPnl");

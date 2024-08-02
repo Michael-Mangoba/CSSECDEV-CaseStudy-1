@@ -5,6 +5,10 @@ import Model.User;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
+import Controller.SessionManager;
+import Controller.Session;
+
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -100,55 +104,105 @@ public class Login extends javax.swing.JPanel {
                 .addContainerGap(126, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+    // private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    //     long currentTime = System.currentTimeMillis();
+    //     SQLite sqlite = new SQLite();
+    //     ArrayList<User> users = sqlite.getUsers();
+    //     String inputUsername = usernameFld.getText();
+    //     String inputPassword = passwordFld.getText();
+        
+    //     if(sqlite.getLock(inputUsername) == 1 || sqlite.getUserRole(inputUsername) == 1){
+    //         JOptionPane.showMessageDialog(this, "Login failed; User is Disabled or Locked, please communicate with an Admin in order to re-enable the account");
+    //         return;
+    //     }
+        
+    //     if (loginAttempts >= MAX_ATTEMPTS && currentTime - lastAttemptTime < COOLDOWN_PERIOD) {
+    //         long waitTime = (COOLDOWN_PERIOD - (currentTime - lastAttemptTime)) / 1000;
+    //         JOptionPane.showMessageDialog(this, "Too many failed attempts. Please wait " + waitTime + " seconds before trying again.");
+    //         //Not sure about this
+    //         logAttempt(usernameFld.getText(), false);
+    //         return;
+    //     }
+    
+        
+    
+    //     int userID = -1;
+    //     boolean loginSuccess = false;
+    
+    //     for (User user : users) {
+    //         if (user.getUsername().equals(inputUsername)) {
+    //             if (user.getHashedPassword().equals(SecurityUtils.hashPassword(inputPassword))) {
+    //                 userID = user.getId();
+    //                 loginSuccess = true;
+    //                 break;
+    //             }
+    //         }
+    //     }
+    
+    //     logAttempt(inputUsername, loginSuccess);
+    
+    //     if (loginSuccess) {
+    //         frame.mainNav(inputUsername); // Navigate to the main frame on successful login
+    //     } else {
+    //         checkDisableUser(inputUsername);
+    //         loginAttempts++;
+    //         lastAttemptTime = currentTime;
+    //         JOptionPane.showMessageDialog(this, "Login failed; Invalid user ID or password. Attempts remaining: " + (MAX_ATTEMPTS - loginAttempts));
+    //     }
+        
+    //     usernameFld.setText("");
+    //     passwordFld.setText("");
+    // }
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {                                         
         long currentTime = System.currentTimeMillis();
         SQLite sqlite = new SQLite();
         ArrayList<User> users = sqlite.getUsers();
         String inputUsername = usernameFld.getText();
         String inputPassword = passwordFld.getText();
-        
+    
         if(sqlite.getLock(inputUsername) == 1 || sqlite.getUserRole(inputUsername) == 1){
             JOptionPane.showMessageDialog(this, "Login failed; User is Disabled or Locked, please communicate with an Admin in order to re-enable the account");
             return;
         }
-        
+    
         if (loginAttempts >= MAX_ATTEMPTS && currentTime - lastAttemptTime < COOLDOWN_PERIOD) {
             long waitTime = (COOLDOWN_PERIOD - (currentTime - lastAttemptTime)) / 1000;
             JOptionPane.showMessageDialog(this, "Too many failed attempts. Please wait " + waitTime + " seconds before trying again.");
-            //Not sure about this
-            logAttempt(usernameFld.getText(), false);
+            logAttempt(inputUsername, false);
             return;
         }
     
-        
-    
-        int userID = -1;
         boolean loginSuccess = false;
+        User loggedInUser = null;
     
         for (User user : users) {
-            if (user.getUsername().equals(inputUsername)) {
-                if (user.getHashedPassword().equals(SecurityUtils.hashPassword(inputPassword))) {
-                    userID = user.getId();
-                    loginSuccess = true;
-                    break;
-                }
+            if (user.getUsername().equals(inputUsername) && user.getHashedPassword().equals(SecurityUtils.hashPassword(inputPassword))) {
+                loggedInUser = user;
+                loginSuccess = true;
+                break;
             }
         }
     
         logAttempt(inputUsername, loginSuccess);
     
-        if (loginSuccess) {
-            frame.mainNav(inputUsername); // Navigate to the main frame on successful login
+        if (loginSuccess && loggedInUser != null) {
+            Session session = new Session(loggedInUser);
+            SessionManager sessionManager = new SessionManager(300000, session);  // 5 minutes timeout
+            frame.setUserSession(sessionManager);  // Set the session in the Frame
+    
+            frame.mainNav(loggedInUser.getUsername());  // Navigate to the main frame on successful login
         } else {
             checkDisableUser(inputUsername);
             loginAttempts++;
             lastAttemptTime = currentTime;
             JOptionPane.showMessageDialog(this, "Login failed; Invalid user ID or password. Attempts remaining: " + (MAX_ATTEMPTS - loginAttempts));
         }
-        
+    
         usernameFld.setText("");
         passwordFld.setText("");
     }
+    
+    
     
     private void checkDisableUser(String username){
         SQLite sqlite = new SQLite();
