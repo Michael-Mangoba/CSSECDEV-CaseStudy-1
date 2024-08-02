@@ -192,33 +192,39 @@ public class MgmtProduct extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void purchaseBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_purchaseBtnActionPerformed
-        if(table.getSelectedRow() >= 0){
+        if (table.getSelectedRow() >= 0) {
             JTextField stockFld = new JTextField("0");
             designer(stockFld, "PRODUCT STOCK");
-
+    
             Object[] message = {
                 "How many " + tableModel.getValueAt(table.getSelectedRow(), 0) + " do you want to purchase?", stockFld
             };
-
+    
             int result = JOptionPane.showConfirmDialog(null, message, "PURCHASE PRODUCT", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
-
+    
             if (result == JOptionPane.OK_OPTION) {
                 String productName = tableModel.getValueAt(table.getSelectedRow(), 0).toString();
                 int stockToPurchase = Integer.parseInt(stockFld.getText());
-                String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
-                Product product = sqlite.getProduct(productName);
-                product.setStock(product.getStock() - stockToPurchase);
-              
+                int currentStock = (Integer) tableModel.getValueAt(table.getSelectedRow(), 1);
                 
-                // Add purchase history
-                if(stockToPurchase > 0)
-                    sqlite.addHistory(currentUser.getUsername(), productName, stockToPurchase, timestamp);
-                
-                System.out.println(stockFld.getText());
-                this.init();
+                if (stockToPurchase > currentStock) {
+                    JOptionPane.showMessageDialog(this, "Cannot purchase more than available stock. Available stock: " + currentStock);
+                } else {
+                    String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+                    Product product = sqlite.getProduct(productName);
+                    product.setStock(product.getStock() - stockToPurchase);
+                    
+                    // Add purchase history
+                    if (stockToPurchase > 0) {
+                        sqlite.addHistory(currentUser.getUsername(), productName, stockToPurchase, timestamp);
+                    }
+                    
+                    this.init();
+                }
             }
         }
     }//GEN-LAST:event_purchaseBtnActionPerformed
+    
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
         JTextField nameFld = new JTextField();
