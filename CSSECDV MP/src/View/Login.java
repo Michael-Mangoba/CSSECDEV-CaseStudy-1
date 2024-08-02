@@ -153,25 +153,13 @@ public class Login extends javax.swing.JPanel {
     //     usernameFld.setText("");
     //     passwordFld.setText("");
     // }
-    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {
         long currentTime = System.currentTimeMillis();
         SQLite sqlite = new SQLite();
         ArrayList<User> users = sqlite.getUsers();
         String inputUsername = usernameFld.getText();
         String inputPassword = passwordFld.getText();
-    
-        if(sqlite.getLock(inputUsername) == 1 || sqlite.getUserRole(inputUsername) == 1){
-            JOptionPane.showMessageDialog(this, "Login failed; User is Disabled or Locked, please communicate with an Admin in order to re-enable the account");
-            return;
-        }
-    
-        if (loginAttempts >= MAX_ATTEMPTS && currentTime - lastAttemptTime < COOLDOWN_PERIOD) {
-            long waitTime = (COOLDOWN_PERIOD - (currentTime - lastAttemptTime)) / 1000;
-            JOptionPane.showMessageDialog(this, "Too many failed attempts. Please wait " + waitTime + " seconds before trying again.");
-            logAttempt(inputUsername, false);
-            return;
-        }
-    
+        
         boolean loginSuccess = false;
         User loggedInUser = null;
     
@@ -186,21 +174,21 @@ public class Login extends javax.swing.JPanel {
         logAttempt(inputUsername, loginSuccess);
     
         if (loginSuccess && loggedInUser != null) {
-            Session session = new Session(loggedInUser);
-            SessionManager sessionManager = new SessionManager(300000, session);  // 5 minutes timeout
-            frame.setUserSession(sessionManager);  // Set the session in the Frame
-    
-            frame.mainNav(loggedInUser.getUsername());  // Navigate to the main frame on successful login
+            SessionManager sessionManager = new SessionManager(frame, 30000); // 5 minutes timeout
+            frame.setUserSession(sessionManager);  // Assuming this method sets the session manager in Frame
+            frame.mainNav(loggedInUser.getUsername()); // Navigate to the main frame on successful login
         } else {
             checkDisableUser(inputUsername);
             loginAttempts++;
             lastAttemptTime = currentTime;
             JOptionPane.showMessageDialog(this, "Login failed; Invalid user ID or password. Attempts remaining: " + (MAX_ATTEMPTS - loginAttempts));
         }
+        
     
         usernameFld.setText("");
         passwordFld.setText("");
     }
+    
     
     
     

@@ -6,6 +6,8 @@ import Model.User;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
+
+import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
 public class Frame extends javax.swing.JFrame {
@@ -308,6 +310,12 @@ public class Frame extends javax.swing.JFrame {
     
     public void registerAction(String username, String password, String confpass){
         main.sqlite.addUser(username, password);
+    }
+
+    public void onSessionExpired() {
+        // You can implement additional logic here to navigate to the login screen
+        loginNav(); // Navigate back to the login screen
+        JOptionPane.showMessageDialog(this, "Session has expired due to inactivity.");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -2,22 +2,18 @@ package Controller;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import View.Frame;
 
 public class SessionManager {
     private Timer timer;
-    private final int timeout; // Timeout in milliseconds, default to 10 minutes
-    private Session session;
+    private final int timeout; // Timeout in milliseconds
+    private Frame frame;
 
-    // Constructor with specified timeout
-    public SessionManager(int timeout, Session session) {
+    // Constructor that accepts a Frame object which includes session expiry handling
+    public SessionManager(Frame frame, int timeout) {
+        this.frame = frame;
         this.timeout = timeout;
-        this.session = session;
         startSessionTimer();
-    }
-
-    // Constructor with default timeout of 10 minutes
-    public SessionManager(Session session) {
-        this(600000, session); // 600000 milliseconds = 10 minutes
     }
 
     private void startSessionTimer() {
@@ -28,8 +24,8 @@ public class SessionManager {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                session.invalidate();
-                System.out.println("Session expired after 10 minutes of inactivity.");
+                frame.onSessionExpired(); // Call the method on session expiration
+                System.out.println("Session expired after timeout.");
             }
         }, timeout);
     }
@@ -42,7 +38,6 @@ public class SessionManager {
         if (timer != null) {
             timer.cancel(); // Stop the timer
         }
-        session.invalidate();
-        System.out.println("Session manually ended.");
+        frame.onSessionExpired(); // Call the method on session end
     }
 }
