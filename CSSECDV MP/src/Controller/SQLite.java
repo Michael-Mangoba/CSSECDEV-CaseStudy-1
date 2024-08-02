@@ -19,31 +19,6 @@ public class SQLite {
     
     public int DEBUG_MODE = 0;
     String driverURL = "jdbc:sqlite:" + "database.db";
-    private User currentUser;
-        
-    public void login(String username){
-        currentUser = this.getUser(username);
-        System.out.print("User " + this.currentUser.getUsername());
-    }
-    
-    public void logout(){
-        this.currentUser = null;
-    }
-    
-    public User getCurrentUser(){
-        return currentUser;
-    }
-    
-    public int checkUserNull(){
-        if(currentUser == null){
-            return 1;
-        }
-        return 0;
-    }
-    
-    public int getCurrentUserRole(){
-        return currentUser.getRole();
-    }
     
     public void createNewDatabase() {
         try (Connection conn = DriverManager.getConnection(driverURL)) {
